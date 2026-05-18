@@ -1,0 +1,52 @@
+node_modules/
+dist/
+build/
+.cache/
+.parcel-cache/
+.next/
+.turbo/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local env
+.env
+.env.local
+.env.*.local
+
+# Server runtime data
+apps/server/data/
+apps/server/storage/
+apps/server/dev.db
+apps/server/dev.db-journal
+apps/server/prisma/migrations/dev/
+apps/server/prisma/dev.db
+apps/server/prisma/dev.db-journal
+apps/server/e2e.db
+apps/server/e2e.db-journal
+
+# Playwright-managed browser binaries (downloaded on demand)
+.pw-browsers/
+
+# Fixtures (generated)
+fixtures/out/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/

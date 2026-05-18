@@ -1,0 +1,33 @@
+{
+  "name": "slidestage-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Self-hosted .stage presentation platform (Phase A MVP)",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" build && pnpm -r --filter \"./apps/*\" build",
+    "build:shared": "pnpm --filter @slidestage/shared build",
+    "build:server": "pnpm --filter @slidestage/server build",
+    "build:web": "pnpm --filter @slidestage/web build",
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "dev:server": "pnpm --filter @slidestage/server dev",
+    "dev:web": "pnpm --filter @slidestage/web dev",
+    "test": "pnpm -r test",
+    "test:server": "pnpm --filter @slidestage/server test",
+    "test:e2e": "pnpm --filter @slidestage/web test:e2e",
+    "fixtures": "node scripts/build-fixture.mjs",
+    "db:migrate": "pnpm --filter @slidestage/server db:migrate",
+    "clean": "pnpm -r exec rm -rf dist node_modules/.cache && rm -rf node_modules"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "esbuild",
+      "prisma"
+    ]
+  }
+}
