@@ -1,31 +1,37 @@
 {
-  "name": "@slidestage/web",
+  "name": "@slidestage/pro-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "description": "SlideStage Pro web client (React 19 + Vite + react-router v7).",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -p tsconfig.json --noEmit && vite build",
-    "preview": "vite preview --port 4173 --host 0.0.0.0",
-    "test:e2e": "playwright test",
-    "test:e2e:install": "playwright install --with-deps chromium"
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 4173",
+    "typecheck": "tsc -b --noEmit",
+    "test": "vitest run --reporter=verbose"
   },
   "dependencies": {
-    "@slidestage/shared": "workspace:*",
+    "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
+    "@slidestage/lite-preset": "file:../../vendor/slidestage-lite-preset-0.1.0.tgz",
+    "@slidestage/pro-preset": "workspace:*",
+    "@slidestage/pro-shared": "workspace:*",
+    "@slidestage/ui": "file:../../vendor/slidestage-ui-0.1.0.tgz",
+    "better-auth": "^1.4.0",
+    "fflate": "^0.8.2",
     "lucide-react": "^1.14.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-router": "^7.10.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.2",
-    "@types/adm-zip": "^0.5.8",
-    "@types/node": "^22.7.5",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "@vitejs/plugin-react": "^4.3.3",
-    "adm-zip": "^0.5.17",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.12",
+    "vitest": "^4.1.6"
   }
 }

@@ -1,0 +1,24 @@
+{
+  "name": "@slidestage/pro-preset",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pro-only plugin preset for SlideStage. Wires Pro capabilities into a SlideStage instance.",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "echo 'no tests yet' && exit 0"
+  },
+  "dependencies": {
+    "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
+    "@slidestage/pro-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}

@@ -2,4 +2,9 @@
 alwaysApply: true
 ---
 
-You must read document in docs/ before any changes.
+# Project Context Loading
+
+- Read relevant files under `docs/` before changes that touch architecture, API behavior, auth, storage, export, or deployment.
+- Do not blindly read every document for small edits; choose the docs that match the task.
+- If behavior changes make a document inaccurate, update that document in the same task.
+- For Lite package dependency or shared `.stage` compatibility work, also inspect the published/public API expectations in the Lite package docs instead of copying Lite source.

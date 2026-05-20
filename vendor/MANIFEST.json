@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-05-20T10:37:03.632Z",
+  "liteCommit": "5418004a7b13539476f960fa844f5d4d1fbefe00",
+  "litePath": "/Users/hcliu/Code/SlideStage/SlideStageLite",
+  "packages": [
+    {
+      "name": "@slidestage/core",
+      "version": "0.1.0",
+      "file": "slidestage-core-0.1.0.tgz",
+      "sha256": "8ce6244ec65029bfc00a0d909fbd0d7f7d9a1a8f24b94089f95b086ecc043a35"
+    },
+    {
+      "name": "@slidestage/ui",
+      "version": "0.1.0",
+      "file": "slidestage-ui-0.1.0.tgz",
+      "sha256": "853cfe708beae528cf5f92a43d058367cd849c262e54f4d16002c3f3dbe7129c"
+    },
+    {
+      "name": "@slidestage/lite-preset",
+      "version": "0.1.0",
+      "file": "slidestage-lite-preset-0.1.0.tgz",
+      "sha256": "99bb1fca1616c113c9cdf4feed759ce360a494b993fa2984e7e3701a8a30bb95"
+    }
+  ]
+}

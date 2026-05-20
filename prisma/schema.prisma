@@ -1,0 +1,175 @@
+// SlideStage Pro v0 schema
+// - Better Auth manages: User, Session, Account, Verification (table names lowercased via @@map)
+// - Business tables: Deck, DeckVersion, SlideNote, SlideAnnotation
+// - Admin invite system: Invite
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Better Auth core tables (DO NOT remove fields)
+// Run `npx @better-auth/cli generate --y` to regenerate when
+// Better Auth introduces new required columns.
+// ============================================================
+
+model User {
+  id              String    @id
+  name            String
+  email           String    @unique
+  emailVerified   Boolean   @default(false)
+  image           String?
+  // Pro extension: role gates admin-only endpoints
+  role            String    @default("user")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  sessions        Session[]
+  accounts        Account[]
+  decks           Deck[]
+  invitesCreated  Invite[]  @relation("InviteCreatedBy")
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+// ============================================================
+// SlideStage business tables
+// ============================================================
+
+model Deck {
+  id               String   @id @default(cuid())
+  ownerId          String?
+  title            String
+  fingerprint      String
+  currentVersionId String?
+  visibility       String   @default("private") // 'private' | 'unlisted' | 'public'
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  owner       User?             @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  versions    DeckVersion[]
+  notes       SlideNote[]
+  annotations SlideAnnotation[]
+
+  @@index([ownerId])
+  @@index([fingerprint])
+  @@map("deck")
+}
+
+model DeckVersion {
+  id           String   @id @default(cuid())
+  deckId       String
+  objectKey    String   // storage driver key, e.g. "decks/<deckId>/<versionId>.stage"
+  manifestJson String   // JSON-serialized SlideStageManifest (validated by @slidestage/core)
+  sizeBytes    Int
+  sha256       String
+  createdAt    DateTime @default(now())
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@index([deckId])
+  @@index([sha256])
+  @@map("deck_version")
+}
+
+model SlideNote {
+  id         String   @id @default(cuid())
+  deckId     String
+  slideIndex Int
+  body       String
+  updatedAt  DateTime @updatedAt
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([deckId, slideIndex])
+  @@map("slide_note")
+}
+
+model SlideAnnotation {
+  id          String   @id @default(cuid())
+  deckId      String
+  slideIndex  Int
+  payloadJson String   // free-form JSON for annotation payload (Pro tool may extend)
+  updatedAt   DateTime @updatedAt
+
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([deckId, slideIndex])
+  @@map("slide_annotation")
+}
+
+// ============================================================
+// Admin invite system
+// Registration is locked: only Invite-bearer can create accounts.
+// ============================================================
+
+model Invite {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  email       String?   // optional pre-bind to an email
+  role        String    @default("user") // role granted on redeem
+  createdById String
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime
+  usedAt      DateTime?
+  usedByEmail String?
+
+  createdBy User @relation("InviteCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([createdById])
+  @@index([token])
+  @@map("invite")
+}
