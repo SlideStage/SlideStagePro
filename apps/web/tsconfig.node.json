@@ -1,15 +1,14 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
     "outDir": "dist/node",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "lib": ["ES2023"],
     "types": ["node"],
-    "noEmit": false,
-    "declaration": false,
+    "noEmit": true,
     "tsBuildInfoFile": "dist/.node.tsbuildinfo"
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts"],
+  "exclude": ["dist", "node_modules"]
 }
