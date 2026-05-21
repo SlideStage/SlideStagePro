@@ -14,7 +14,6 @@
 
 <p align="center">
   <a href="https://slidestage.dev"><img alt="Website" src="https://img.shields.io/badge/website-slidestage.dev-4F46E5?style=flat-square"></a>
-  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-111827?style=flat-square"></a>
   <a href="https://github.com/SlideStage/SlideStageLite"><img alt="Lite" src="https://img.shields.io/badge/sibling-SlideStageLite-06B6D4?style=flat-square"></a>
 </p>
 
@@ -35,19 +34,19 @@ persistence, admin invites, and Docker-based deployment.
     <td align="center" width="33%">
       <a href="https://github.com/SlideStage/SlideStageLite"><img src="brand/png/slidestage-mark.png" width="84" alt="SlideStageLite"></a><br/>
       <strong>SlideStageLite</strong><br/>
-      <sub>Local-first runtime · MIT</sub><br/>
+      <sub>Local-first runtime</sub><br/>
       <sub>Open, present, convert <code>.stage</code> in any browser.</sub>
     </td>
     <td align="center" width="33%">
       <a href="https://github.com/SlideStage/SlideStagePro"><img src="brand/png/slidestage-pro-mark.png" width="84" alt="SlideStagePro"></a><br/>
       <strong>SlideStagePro</strong><br/>
-      <sub>Self-hosted platform · MIT</sub><br/>
+      <sub>Self-hosted platform</sub><br/>
       <sub>Multi-user library, notes &amp; annotations, Docker-deployable.</sub>
     </td>
     <td align="center" width="33%">
       <a href="https://github.com/SlideStage/slidestage-pack"><img src="brand/png/slidestage-pack-mark.png" width="84" alt="slidestage-pack"></a><br/>
       <strong>slidestage-pack</strong><br/>
-      <sub>Agent skill packer · MIT</sub><br/>
+      <sub>Agent skill packer</sub><br/>
       <sub>Turn any HTML deck into a <code>.stage</code> file.</sub>
     </td>
   </tr>
@@ -169,7 +168,3 @@ Forbidden patterns (enforced by `scripts/check-boundaries.mjs`):
 - `VITE_APP_EDITION` or `isPro` edition branching
 - `apps/api` importing `react` / `react-dom`
 - `apps/web` importing `@prisma/client` / `better-sqlite3` / `hono`
-
-## License
-
-MIT. Built on the open-source SlideStage Lite runtime (also MIT).

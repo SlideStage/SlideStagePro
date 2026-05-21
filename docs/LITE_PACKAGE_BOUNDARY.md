@@ -12,10 +12,10 @@ debated.
 ## 1. Why a boundary at all
 
 SlideStage Lite is the canonical, open-source `.stage` runtime. It must be
-runnable as a pure-frontend bundle (no server), publishable to npm under MIT,
-and welcoming to outside contributors. SlideStage Pro is the commercial
-multi-user host: it stores `.stage` blobs, brokers identity, exposes a Hono
-API, runs Prisma+SQLite on a VPS.
+runnable as a pure-frontend bundle (no server), publishable to npm, and
+welcoming to outside contributors. SlideStage Pro is the multi-user host:
+it stores `.stage` blobs, brokers identity, exposes a Hono API, runs
+Prisma+SQLite on a VPS.
 
 If Pro freely forked, patched, or `file:`-imported Lite source, three bad
 things happen:
@@ -23,8 +23,9 @@ things happen:
 1. **Compatibility drift** — Pro's "improved" `manifestSchema` diverges from
    Lite's, every `.stage` file produced by Pro fails Lite validation, the
    community ecosystem fragments.
-2. **License pollution** — Pro patches in this repo are not MIT and can never
-   round-trip back to Lite without major surgery.
+2. **Diverging patches** — Pro-side changes to Lite source can never
+   round-trip back to Lite without major surgery, and the longer they sit
+   downstream the wider the gap grows.
 3. **Edition cancer** — `isPro` / `VITE_APP_EDITION` checkpoints sprinkle
    across the codebase, every refactor needs to ask "but does Pro do
    this?", and Lite contributors learn to fear the diff.
