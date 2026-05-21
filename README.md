@@ -55,11 +55,20 @@ persistence, admin invites, and Docker-based deployment.
 
 ---
 
-> **Status:** v0 rebuild on branch `rebuild-pro-from-zero`. See
-> [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (TBD by Agent F) for the
-> full architecture and [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) /
-> [`docs/AUTH_FLOW.md`](docs/AUTH_FLOW.md) for the frozen contracts that the
-> Phase 1 parallel agents consume.
+> **Status — v0 feature-complete (on branch `rebuild-pro-from-zero`).**
+> The full stack — API, web, packages, schema, vendor tarballs, Docker
+> compose, nginx reverse-proxy, boundary checker (+ its own self-test),
+> fixture generator — is implemented and passes `check:boundaries` /
+> `typecheck` / 18 tests / `build`. The `docker compose build && up`
+> path is wired and statically validated; running it requires a Docker
+> daemon (Docker Desktop / OrbStack / Colima).
+>
+> Documentation:
+> [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) ·
+> [`docs/API_CONTRACT.md`](docs/API_CONTRACT.md) ·
+> [`docs/AUTH_FLOW.md`](docs/AUTH_FLOW.md) ·
+> [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) ·
+> [`docs/LITE_PACKAGE_BOUNDARY.md`](docs/LITE_PACKAGE_BOUNDARY.md)
 
 ## Repository layout
 
@@ -69,19 +78,23 @@ SlideStagePro/
 │   ├── api/                Hono server, Prisma client, Better Auth, storage
 │   └── web/                Vite + React 19 + react-router v7 client
 ├── packages/
-│   ├── pro-preset/         Pro-only SlideStage plugin (createSlideStage)
+│   ├── pro-preset/         Pro-only SlideStage plugin (proPreset factory)
 │   └── pro-shared/         Pro-internal shared types/constants
 ├── prisma/
-│   └── schema.prisma       Single SQLite schema (Better Auth + business + invites)
+│   ├── schema.prisma       Single SQLite schema (Better Auth + business + invites)
+│   └── migrations/         Versioned SQL migrations (auto-applied on boot)
 ├── vendor/                 Vendored Lite tarballs (v0 only — removed once Lite ships to npm)
 ├── infra/
-│   ├── docker/             Dockerfile.api, Dockerfile.web
-│   └── nginx/              nginx.conf reverse proxy config
+│   ├── docker/             Dockerfile.api, Dockerfile.web, api-entrypoint.sh
+│   └── nginx/              edge nginx.conf + in-web-image web.conf
 ├── scripts/
-│   ├── check-boundaries.mjs   CI gate: enforce Lite-Pro boundary
-│   └── sync-vendor.mjs        Re-pack Lite tarballs into vendor/
-├── docs/                   Architecture, API, Auth, Deployment docs
-└── docker-compose.yml      Production-ready stack
+│   ├── check-boundaries.mjs       CI gate: enforce Lite ↔ Pro boundary
+│   ├── check-boundaries.test.mjs  Self-test: forge violations, assert checker fails
+│   ├── sync-vendor.mjs            Re-pack Lite tarballs into vendor/
+│   └── build-fixtures.mjs         Emit canonical .stage fixtures for manual QA
+├── fixtures/               Smoke-test .stage files (valid + 3 invalid)
+├── docs/                   Architecture · API · Auth · Deployment · Boundary
+└── docker-compose.yml      api + web + nginx stack with persistent volume
 ```
 
 ## Quick start (development)
@@ -124,13 +137,15 @@ The compose stack runs three services:
 ## CI checks (run before committing)
 
 ```bash
-pnpm check:boundaries   # block file:../SlideStageLite, react in API, isPro, etc.
-pnpm typecheck
-pnpm test
-pnpm build
+pnpm check:boundaries              # 0 violations on prose-free files
+pnpm check:boundaries:self-test    # forge a violation per rule, verify checker fails
+pnpm typecheck                     # tsc across all 4 workspace packages
+pnpm test                          # 18 vitest cases across api + web
+pnpm build                         # api dist + packages dist + vite SPA bundle
+pnpm fixtures:check                # verify fixture .stage files exist + match
 ```
 
-All four pass = your change is safe to merge.
+All six green = the diff is safe to merge.
 
 ## Lite ↔ Pro boundary
 

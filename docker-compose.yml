@@ -1,0 +1,94 @@
+# SlideStagePro v0 — 3-service stack
+#
+# Usage:
+#   cp .env.example .env             # set BETTER_AUTH_SECRET + BOOTSTRAP_ADMIN_*
+#   docker compose build
+#   docker compose up -d
+#   curl http://localhost/api/health
+#
+# Persistence: SQLite + uploaded .stage blobs live on the `slidestage-data`
+# named volume mounted at /data inside the api container.
+
+name: slidestage-pro
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.api
+    image: slidestage-pro/api:0.1.0
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOST: 0.0.0.0
+      DATABASE_URL: file:/data/slidestage-pro.sqlite
+      STORAGE_DRIVER: local
+      DATA_DIR: /data
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?BETTER_AUTH_SECRET must be set in .env}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:?BOOTSTRAP_ADMIN_EMAIL must be set in .env}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:?BOOTSTRAP_ADMIN_PASSWORD must be set in .env}
+      BOOTSTRAP_ADMIN_NAME: ${BOOTSTRAP_ADMIN_NAME:-Admin}
+      UPLOAD_MAX_BYTES: ${UPLOAD_MAX_BYTES:-104857600}
+      ANNOTATION_MAX_BYTES: ${ANNOTATION_MAX_BYTES:-65536}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost}
+    volumes:
+      - slidestage-data:/data
+    networks:
+      - slidestage
+    expose:
+      - "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/health >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile.web
+    image: slidestage-pro/web:0.1.0
+    restart: unless-stopped
+    networks:
+      - slidestage
+    expose:
+      - "8080"
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "${EDGE_HTTP_PORT:-80}:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - slidestage
+    depends_on:
+      api:
+        condition: service_started
+      web:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1/healthz >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+networks:
+  slidestage:
+    driver: bridge
+
+volumes:
+  slidestage-data:
+    driver: local

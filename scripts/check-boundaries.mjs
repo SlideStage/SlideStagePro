@@ -65,10 +65,16 @@ const IGNORE_DIRS = new Set([
 const IGNORE_PATH_SUBSTRINGS = [
   // The boundary checker itself contains literal violating strings as data.
   "scripts/check-boundaries.mjs",
+  // The boundary checker's own test fixture file literally writes invalid
+  // imports as test inputs to prove the checker catches them.
+  "scripts/check-boundaries.test.mjs",
   // sync-vendor.mjs intentionally references the Lite checkout to PACK from it.
   "scripts/sync-vendor.mjs",
-  // docs may QUOTE forbidden strings inside fenced blocks marked as bad-examples.
-  // We allow ``` blocks tagged as `lite-bad-example` to opt-out per-line via marker.
+  // Docs are reference material that must be able to QUOTE forbidden strings
+  // as bad-examples ("don't do this") without tripping the checker. The
+  // boundary rules apply to *code*, not to prose explaining the rules.
+  "docs/",
+  ".cursor/rules/",
 ];
 
 /**

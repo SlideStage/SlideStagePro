@@ -9,12 +9,18 @@
     "node": ">=22"
   },
   "scripts": {
+    "predev": "pnpm -r --filter \"./packages/*\" build",
     "dev": "pnpm --parallel --filter \"./apps/*\" dev",
     "build": "pnpm -r --filter \"./packages/*\" build && pnpm -r --filter \"./apps/*\" build",
+    "pretypecheck": "pnpm -r --filter \"./packages/*\" build",
     "typecheck": "pnpm -r typecheck",
+    "pretest": "pnpm -r --filter \"./packages/*\" build",
     "test": "pnpm -r test",
     "check": "pnpm check:boundaries && pnpm typecheck && pnpm test && pnpm build",
     "check:boundaries": "node scripts/check-boundaries.mjs",
+    "check:boundaries:self-test": "node scripts/check-boundaries.test.mjs",
+    "fixtures": "node scripts/build-fixtures.mjs",
+    "fixtures:check": "node scripts/build-fixtures.mjs --check",
     "sync:vendor": "node scripts/sync-vendor.mjs",
     "db:generate": "pnpm --filter @slidestage/pro-api db:generate",
     "db:migrate": "pnpm --filter @slidestage/pro-api db:migrate",
@@ -24,13 +30,7 @@
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@prisma/client",
-      "@prisma/engines",
-      "better-sqlite3",
-      "esbuild",
-      "prisma"
-    ]
+  "devDependencies": {
+    "fflate": "^0.8.2"
   }
 }

@@ -1,0 +1,52 @@
+# Keep build context lean. Anything listed here is NEVER sent to docker build.
+
+# Repo metadata
+.git
+.gitignore
+.gitattributes
+.github
+
+# Build / install outputs (regenerated inside the image)
+node_modules
+**/node_modules
+**/dist
+**/build
+**/.turbo
+**/.cache
+**/.tsbuildinfo
+**/*.tsbuildinfo
+.pnpm-store
+
+# Test / coverage / e2e artifacts
+**/coverage
+**/test-results
+**/playwright-report
+**/e2e-storage
+**/.nyc_output
+**/.pw-browsers
+
+# Local runtime data
+data
+storage
+*.sqlite
+*.sqlite-*
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.idea
+.vscode
+*.swp
+*.swo
+
+# Cursor / agent transcripts
+.cursor
+
+# Docs (not needed at runtime; nginx/api don't serve them)
+docs
+
+# Cursor-specific build helpers we don't need in the image
+!scripts
+!apps/api/scripts

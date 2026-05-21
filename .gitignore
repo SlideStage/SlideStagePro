@@ -7,6 +7,11 @@ dist/
 build/
 *.tsbuildinfo
 
+# Accidental tsc emit alongside .ts test sources (vitest reads .ts directly).
+# Keep .test.ts sources but ignore any .test.js compiled from them.
+apps/api/tests/**/*.js
+apps/web/tests/**/*.js
+
 # Coverage / test artifacts
 coverage/
 .nyc_output/

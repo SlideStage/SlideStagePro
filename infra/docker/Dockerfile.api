@@ -1,0 +1,108 @@
+# syntax=docker/dockerfile:1.7
+#
+# SlideStagePro API — Node 22 + Hono + Prisma + Better Auth
+#
+# Build context: monorepo ROOT (so vendor/*.tgz, prisma/, and workspace
+# packages are reachable in a single COPY pass).
+#
+#   docker build -f infra/docker/Dockerfile.api -t slidestage-pro/api .
+#
+# Multi-stage:
+#   base     — node:22-alpine + system deps for better-sqlite3 native build
+#   deps     — pnpm + workspace manifests + install (incl. Prisma generate)
+#   build    — compile API TS to dist/
+#   runtime  — slim final image; only what we need to run
+
+ARG NODE_VERSION=22.20.0
+ARG PNPM_VERSION=11.1.3
+
+# ─── base ────────────────────────────────────────────────────────────────────
+FROM node:${NODE_VERSION}-alpine AS base
+ENV PNPM_HOME=/pnpm \
+    PATH=/pnpm:$PATH \
+    CI=true
+RUN apk add --no-cache \
+      libstdc++ \
+      bash \
+      tini
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+WORKDIR /app
+
+# ─── deps ────────────────────────────────────────────────────────────────────
+# Install ALL workspace deps. We need native build toolchain here because
+# better-sqlite3 ships a node-gyp prebuild script that compiles against musl.
+FROM base AS deps
+RUN apk add --no-cache python3 make g++ git
+# Workspace manifest layer (cache-friendly: re-install only when manifests change)
+COPY pnpm-workspace.yaml pnpm-lock.yaml .npmrc package.json ./
+COPY prisma ./prisma
+COPY vendor ./vendor
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/api/scripts ./apps/api/scripts
+COPY apps/web/package.json ./apps/web/package.json
+COPY packages/pro-preset/package.json ./packages/pro-preset/package.json
+COPY packages/pro-shared/package.json ./packages/pro-shared/package.json
+# Install (frozen lockfile = reproducible builds). The postinstall hook in
+# apps/api/scripts/ensure-root-symlinks.mjs wires Prisma into the root
+# node_modules so `prisma generate` can resolve from <repo>/prisma/.
+RUN --mount=type=cache,id=pnpm-store-api,target=/pnpm/store \
+    pnpm install --frozen-lockfile --prefer-offline
+
+# Generate Prisma client into <repo>/node_modules/.prisma/client (the schema
+# pins `output = "../node_modules/.prisma/client"` from the prisma/ dir).
+RUN pnpm --filter @slidestage/pro-api db:generate
+
+# ─── build ───────────────────────────────────────────────────────────────────
+FROM deps AS build
+# Copy the actual sources now (we already have manifests + node_modules).
+COPY tsconfig.base.json ./tsconfig.base.json
+COPY packages/pro-shared ./packages/pro-shared
+COPY packages/pro-preset ./packages/pro-preset
+COPY apps/api ./apps/api
+# Build pro-shared first (workspace dep), then pro-preset, then the API.
+RUN pnpm --filter @slidestage/pro-shared build \
+ && pnpm --filter @slidestage/pro-preset build \
+ && pnpm --filter @slidestage/pro-api build
+
+# ─── runtime ─────────────────────────────────────────────────────────────────
+# Slim image: production-only deps + compiled JS + Prisma artifacts.
+FROM base AS runtime
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOST=0.0.0.0 \
+    DATA_DIR=/data \
+    DATABASE_URL=file:/data/slidestage-pro.sqlite
+
+# `pnpm deploy` would prune dev deps but doesn't play well with prisma client
+# stub redirection. Easier: copy the resolved node_modules tree as-is. The
+# image is still under ~300 MB for v0.
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=build /app/apps/api/dist ./apps/api/dist
+COPY --from=build /app/apps/api/package.json ./apps/api/package.json
+COPY --from=build /app/apps/api/scripts ./apps/api/scripts
+COPY --from=build /app/packages/pro-shared/dist ./packages/pro-shared/dist
+COPY --from=build /app/packages/pro-shared/package.json ./packages/pro-shared/package.json
+COPY --from=build /app/packages/pro-preset/dist ./packages/pro-preset/dist
+COPY --from=build /app/packages/pro-preset/package.json ./packages/pro-preset/package.json
+COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/vendor ./vendor
+COPY --from=build /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/.npmrc ./.npmrc
+
+# Persistence volume mount point. Compose binds a named volume here.
+RUN mkdir -p /data && chown -R node:node /data
+
+# Entrypoint runs `prisma migrate deploy` then starts the API. The migrate
+# step is idempotent — already-applied migrations are skipped.
+COPY infra/docker/api-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+USER node
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- "http://127.0.0.1:${PORT}/api/health" >/dev/null || exit 1
+
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/entrypoint.sh"]
+CMD ["node", "apps/api/dist/index.js"]
