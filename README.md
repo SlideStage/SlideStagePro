@@ -100,8 +100,8 @@ SlideStagePro/
 
 ```bash
 # 1) one-time setup
-cp .env.example .env
-# Edit .env: set BETTER_AUTH_SECRET (openssl rand -base64 32) and BOOTSTRAP_ADMIN_*
+# Optional for local dev: dev mode has safe local defaults.
+# Copy .env.example to .env when you want custom secrets/admin credentials.
 
 # 2) regenerate vendor tarballs from your local Lite checkout
 #    (skip if you already have ../SlideStageLite at the right commit + vendor/*.tgz is fresh)

@@ -1,3 +1,6 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
+import { loadEnvFile } from "node:process";
 import { z } from "zod";
 
 const numeric = (def: number) =>
@@ -16,6 +19,44 @@ const csv = z
       .map((s) => s.trim())
       .filter((s) => s.length > 0),
   );
+
+let localEnvLoaded = false;
+
+function loadLocalEnv(env: NodeJS.ProcessEnv): void {
+  if (env !== process.env || localEnvLoaded) {
+    return;
+  }
+  localEnvLoaded = true;
+
+  for (const envFile of [
+    resolve(process.cwd(), ".env"),
+    resolve(process.cwd(), "../.env"),
+    resolve(process.cwd(), "../../.env"),
+  ]) {
+    if (existsSync(envFile)) {
+      loadEnvFile(envFile);
+      return;
+    }
+  }
+}
+
+const developmentDefaults: NodeJS.ProcessEnv = {
+  DATABASE_URL: "file:./data/slidestage-pro.sqlite",
+  BETTER_AUTH_SECRET: "dev-only-slidestage-pro-secret-change-before-production",
+  BETTER_AUTH_URL: "http://localhost:3000",
+  BOOTSTRAP_ADMIN_EMAIL: "admin@example.com",
+  BOOTSTRAP_ADMIN_PASSWORD: "ChangeMeOnFirstLogin!",
+  BOOTSTRAP_ADMIN_NAME: "Admin",
+  CORS_ORIGINS: "http://localhost:5173,http://localhost",
+};
+
+function withDevelopmentDefaults(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  if (env.NODE_ENV === "production" || env.npm_lifecycle_event !== "dev") {
+    return env;
+  }
+
+  return { ...developmentDefaults, ...env };
+}
 
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -62,7 +103,9 @@ export interface Config {
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
-  const parsed = envSchema.safeParse(env);
+  loadLocalEnv(env);
+
+  const parsed = envSchema.safeParse(withDevelopmentDefaults(env));
   if (!parsed.success) {
     const issues = parsed.error.issues
       .map((i) => `  - ${i.path.join(".")}: ${i.message}`)

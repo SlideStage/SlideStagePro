@@ -73,6 +73,31 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body:has(.lite-presenter-view) {
+  --color-bg: #020617;
+  --color-surface: #0f172a;
+  --color-surface-alt: #111827;
+  --color-border: #1e293b;
+  --color-border-strong: #334155;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-primary-soft: rgba(148, 163, 184, 0.16);
+  background: #020617;
+}
+body:has(.deck-viewer-body.with-speaker) {
+  --color-bg: #020617;
+  --color-surface: #0f172a;
+  --color-surface-alt: #111827;
+  --color-border: #1e293b;
+  --color-border-strong: #334155;
+  --color-text: #e2e8f0;
+  --color-text-muted: #94a3b8;
+  --color-text-subtle: #64748b;
+  --color-primary-soft: rgba(148, 163, 184, 0.16);
+  background: #020617;
+}
+
 h1,
 h2,
 h3,
@@ -120,12 +145,36 @@ kbd {
   flex-direction: column;
 }
 
+body:has(.lite-presenter-view) .app-shell {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(96, 165, 250, 0.08), transparent 34%),
+    #020617;
+  color: #e2e8f0;
+}
+body:has(.deck-viewer-body.with-speaker) .app-shell {
+  background:
+    radial-gradient(circle at 16% 0%, rgba(96, 165, 250, 0.08), transparent 34%),
+    #020617;
+  color: #e2e8f0;
+}
+
 .app-main {
   flex: 1;
   width: 100%;
   margin: 0 auto;
   padding: 24px 24px 64px;
   max-width: var(--container-max);
+}
+
+.app-main:has(.deck-detail__grid) {
+  max-width: 1320px;
+}
+
+body:has(.lite-presenter-view) .app-main {
+  padding-top: 16px;
+}
+body:has(.deck-viewer-body.with-speaker) .app-main {
+  padding-top: 16px;
 }
 
 .page-loading {
@@ -171,10 +220,50 @@ kbd {
   font-size: 22px;
   margin-bottom: 4px;
 }
+body:has(.lite-presenter-view) .page-header__heading h1,
+body:has(.lite-presenter-view) h1,
+body:has(.lite-presenter-view) h2,
+body:has(.lite-presenter-view) h3 {
+  color: #f8fafc;
+}
+body:has(.deck-viewer-body.with-speaker) .page-header__heading h1,
+body:has(.deck-viewer-body.with-speaker) h1,
+body:has(.deck-viewer-body.with-speaker) h2,
+body:has(.deck-viewer-body.with-speaker) h3 {
+  color: #f8fafc;
+}
 
 .page-header__heading p {
   color: var(--color-text-muted);
   font-size: 13px;
+}
+body:has(.lite-presenter-view) .page-header__heading p,
+body:has(.lite-presenter-view) .deck-detail__meta,
+body:has(.lite-presenter-view) .muted,
+body:has(.lite-presenter-view) .mono {
+  color: #94a3b8;
+}
+body:has(.deck-viewer-body.with-speaker) .page-header__heading p,
+body:has(.deck-viewer-body.with-speaker) .deck-detail__meta,
+body:has(.deck-viewer-body.with-speaker) .muted,
+body:has(.deck-viewer-body.with-speaker) .mono {
+  color: #94a3b8;
+}
+body:has(.lite-presenter-view) .deck-detail__meta strong {
+  color: #e2e8f0;
+}
+body:has(.deck-viewer-body.with-speaker) .deck-detail__meta strong {
+  color: #e2e8f0;
+}
+body:has(.lite-presenter-view) .tag {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #cbd5e1;
+}
+body:has(.deck-viewer-body.with-speaker) .tag {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #cbd5e1;
 }
 
 /* ---------- Header ---------- */
@@ -186,6 +275,24 @@ kbd {
   position: sticky;
   top: 0;
   z-index: 20;
+}
+
+body:has(.lite-presenter-view) .app-header {
+  background: rgba(2, 6, 23, 0.94);
+  border-bottom-color: #1e293b;
+  backdrop-filter: blur(10px);
+}
+body:has(.deck-viewer-body.with-speaker) .app-header {
+  background: rgba(2, 6, 23, 0.94);
+  border-bottom-color: #1e293b;
+  backdrop-filter: blur(10px);
+}
+
+body:has(.lite-presenter-view) .app-header__inner {
+  max-width: 1320px;
+}
+body:has(.deck-viewer-body.with-speaker) .app-header__inner {
+  max-width: 1320px;
 }
 
 .app-header__inner {
@@ -204,6 +311,12 @@ kbd {
   gap: 8px;
   font-weight: 600;
   color: var(--color-text);
+}
+body:has(.lite-presenter-view) .app-header__brand {
+  color: #f8fafc;
+}
+body:has(.deck-viewer-body.with-speaker) .app-header__brand {
+  color: #f8fafc;
 }
 .app-header__brand:hover {
   text-decoration: none;
@@ -238,14 +351,36 @@ kbd {
   font-size: 13px;
   font-weight: 500;
 }
+body:has(.lite-presenter-view) .nav-link {
+  color: #94a3b8;
+}
+body:has(.deck-viewer-body.with-speaker) .nav-link {
+  color: #94a3b8;
+}
 .nav-link:hover {
   background: var(--color-surface-alt);
   color: var(--color-text);
   text-decoration: none;
 }
+body:has(.lite-presenter-view) .nav-link:hover {
+  background: rgba(148, 163, 184, 0.12);
+  color: #f8fafc;
+}
+body:has(.deck-viewer-body.with-speaker) .nav-link:hover {
+  background: rgba(148, 163, 184, 0.12);
+  color: #f8fafc;
+}
 .nav-link.active {
   background: var(--color-primary-soft);
   color: var(--color-text);
+}
+body:has(.lite-presenter-view) .nav-link.active {
+  background: rgba(148, 163, 184, 0.16);
+  color: #f8fafc;
+}
+body:has(.deck-viewer-body.with-speaker) .nav-link.active {
+  background: rgba(148, 163, 184, 0.16);
+  color: #f8fafc;
 }
 
 .app-header__actions {
@@ -263,6 +398,34 @@ kbd {
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
   font-size: 12.5px;
+}
+body:has(.lite-presenter-view) .user-chip {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #cbd5e1;
+}
+body:has(.deck-viewer-body.with-speaker) .user-chip {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #cbd5e1;
+}
+body:has(.lite-presenter-view) .user-chip__name {
+  color: #f8fafc;
+}
+body:has(.deck-viewer-body.with-speaker) .user-chip__name {
+  color: #f8fafc;
+}
+body:has(.lite-presenter-view) .btn--ghost {
+  color: #e2e8f0;
+}
+body:has(.deck-viewer-body.with-speaker) .btn--ghost {
+  color: #e2e8f0;
+}
+body:has(.lite-presenter-view) .btn--ghost:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.12);
+}
+body:has(.deck-viewer-body.with-speaker) .btn--ghost:hover:not(:disabled) {
+  background: rgba(148, 163, 184, 0.12);
 }
 .user-chip__name {
   color: var(--color-text);
@@ -389,6 +552,24 @@ kbd {
 .card__description {
   font-size: 13px;
   color: var(--color-text-muted);
+}
+body:has(.lite-presenter-view) .card {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #e2e8f0;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+}
+body:has(.deck-viewer-body.with-speaker) .card {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #e2e8f0;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+}
+body:has(.lite-presenter-view) .card__description {
+  color: #94a3b8;
+}
+body:has(.deck-viewer-body.with-speaker) .card__description {
+  color: #94a3b8;
 }
 .card__actions {
   display: flex;
@@ -779,6 +960,36 @@ kbd {
   gap: 16px;
   min-height: 540px;
 }
+.deck-detail__grid:has(.lite-presenter-view) {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 720px;
+  gap: 0;
+}
+.deck-detail__grid:has(.deck-viewer-body.with-speaker) {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 720px;
+  gap: 0;
+}
+.deck-detail__grid:has(.lite-presenter-view) .deck-detail__rail,
+.deck-detail__grid:has(.lite-presenter-view) .deck-detail__notes,
+.deck-detail__grid:has(.deck-viewer-body.with-speaker) .deck-detail__rail,
+.deck-detail__grid:has(.deck-viewer-body.with-speaker) .deck-detail__notes {
+  display: none;
+}
+.deck-detail__grid:has(.lite-presenter-view) .deck-detail__viewer {
+  min-height: 720px;
+  padding: 0;
+  border-color: #1e293b;
+  background: #020617;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+}
+.deck-detail__grid:has(.deck-viewer-body.with-speaker) .deck-detail__viewer {
+  min-height: 720px;
+  padding: 0;
+  border-color: #1e293b;
+  background: #020617;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+}
 @media (max-width: 1100px) {
   .deck-detail__grid {
     grid-template-columns: minmax(0, 1fr);
@@ -838,6 +1049,7 @@ kbd {
   min-height: 480px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .deck-detail__viewer-empty {
   flex: 1;
@@ -923,4 +1135,931 @@ kbd {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Lite viewer stage CSS (scoped to deck detail's embedded viewer).
+
+   The Lite/UI packages assume the host app provides these base styles in
+   its own globals.css (in SlideStageLite they live at src/styles/globals.css
+   lines ~1107-1215). Without them the iframe pool is invisible (default
+   opacity: 0) and the 1920x1080 .logical-stage element is laid out at its
+   natural size, escaping the viewer container.
+
+   We scope them to .deck-detail__viewer so Pro's other surfaces are not
+   affected.
+   ───────────────────────────────────────────────────────────────────────── */
+
+.deck-detail__viewer .deck-viewer-body {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  background: #000;
+}
+.deck-detail__viewer .lite-deck-viewer {
+  position: relative;
+}
+.deck-detail__viewer .lite-deck-viewer .deck-viewer-body.with-speaker {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 32%);
+  overflow: hidden;
+}
+
+.deck-detail__viewer .lite-deck-viewer .speaker-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  overflow-y: auto;
+  border-left: 1px solid rgba(148, 163, 184, 0.18);
+  background: #111827;
+  color: #e2e8f0;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-panel > header h2 {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-current,
+.deck-detail__viewer .lite-deck-viewer .speaker-next-preview {
+  margin-top: 6px;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: var(--radius-md);
+  background: #0f172a;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-current {
+  color: #f8fafc;
+  text-align: center;
+  font-weight: 600;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-next-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-next-preview .stage-card {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+.deck-detail__viewer .lite-deck-viewer .speaker-next-label {
+  color: #cbd5e1;
+  font-size: 12px;
+}
+
+.deck-detail__viewer .presenter-host {
+  position: relative;
+  width: 100%;
+  display: block;
+  background: #000;
+}
+
+.deck-detail__viewer .stage-card {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+  background: #000;
+}
+
+.deck-detail__viewer .logical-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  overflow: hidden;
+  background: #fff;
+}
+
+.deck-detail__viewer .logical-stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.deck-detail__viewer .logical-stage iframe[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.deck-detail__viewer .annotation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.deck-detail__viewer .annotation-overlay.idle {
+  pointer-events: none;
+}
+.deck-detail__viewer .annotation-overlay.active {
+  pointer-events: auto;
+}
+
+.deck-detail__viewer .laser-pointer {
+  position: absolute;
+  z-index: 5;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ff2d2d;
+  box-shadow: 0 0 18px rgba(255, 45, 45, 0.9);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.deck-detail__viewer .spotlight-overlay,
+.deck-detail__viewer .blackout-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.deck-detail__viewer .blackout-overlay.black {
+  background: #000;
+}
+.deck-detail__viewer .blackout-overlay.white {
+  background: #fff;
+}
+
+/* Deck viewer toolbar inside the embedded card. Lite's deck-open mode adds
+   a full-bleed dark toolbar; the embedded viewer just needs a slim header
+   that matches the Pro card chrome. */
+.deck-detail__viewer .lite-deck-viewer .deck-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 10px;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.deck-detail__viewer .lite-deck-viewer .deck-viewer-toolbar::-webkit-scrollbar {
+  display: none;
+}
+.deck-detail__viewer .lite-deck-viewer .deck-title {
+  display: none;
+}
+.deck-detail__viewer .lite-deck-viewer .deck-counter {
+  flex: 0 0 auto;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+.deck-detail__viewer .deck-toolbar-spacer {
+  display: none;
+}
+.deck-detail__viewer .viewer-header .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+.deck-detail__viewer .viewer-header .btn:hover:not(:disabled) {
+  background: var(--color-primary-soft);
+}
+.deck-detail__viewer .viewer-header .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.deck-detail__viewer .viewer-header .btn.ghost {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+.deck-detail__viewer .viewer-header .btn.primary {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+.deck-detail__viewer .viewer-header .btn.icon-only {
+  width: 30px;
+  min-width: 30px;
+  padding: 0;
+}
+.deck-detail__viewer .viewer-header .btn-icon {
+  flex: 0 0 auto;
+  width: 15px;
+  height: 15px;
+}
+
+/* Lite's `.presenter-toolbar` floats above the stage at the bottom-center
+   via position:absolute. Without these styles it falls into static flow
+   and stacks below the stage card, breaking the embedded card silhouette.
+   `.hidden` is opacity-based (not display:none) so the show/hide
+   transition can animate. */
+.deck-detail__viewer .presenter-host {
+  position: relative;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 6;
+  display: block;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  transform: translateX(-50%);
+  opacity: 1;
+  transition: opacity 240ms ease, transform 240ms ease;
+  pointer-events: auto;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar.hidden {
+  opacity: 0;
+  transform: translate(-50%, 16px);
+  pointer-events: none;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .presenter-toolbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(18, 22, 29, 0.94);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(8px);
+}
+
+.deck-detail__viewer .presenter-toolbar .tool-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    outline-color 120ms ease;
+}
+.deck-detail__viewer .presenter-toolbar .tool-btn:hover {
+  background: rgba(148, 163, 184, 0.16);
+  color: #f8fafc;
+}
+.deck-detail__viewer .presenter-toolbar .tool-btn.active {
+  outline: 1px solid rgba(96, 165, 250, 0.85);
+  background: rgba(96, 165, 250, 0.16);
+  color: #93c5fd;
+}
+.deck-detail__viewer .presenter-toolbar .tool-btn.danger {
+  color: #fca5a5;
+}
+.deck-detail__viewer .presenter-toolbar .tool-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .tool-btn {
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  padding: 0;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .toolbar-sep {
+  width: 1px;
+  height: 24px;
+  align-self: center;
+  margin: 0 4px;
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .color-swatch {
+  width: 22px;
+  height: 22px;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .spotlight-size-control-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 168px;
+  padding: 0 6px;
+  color: #e2e8f0;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .spotlight-size-slider {
+  width: 88px;
+  margin: 0;
+  accent-color: var(--color-primary);
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .spotlight-size-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  color: #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12px;
+}
+
+.deck-detail__viewer .lite-deck-viewer .presenter-toolbar .spotlight-size-unit {
+  color: var(--color-text-subtle);
+  font-size: 10px;
+}
+
+/* Presenter view is still the Lite package's split presenter UI; Pro only
+   supplies the host CSS it expects, scoped to the embedded deck card. */
+.deck-detail__viewer .lite-presenter-view {
+  display: grid;
+  flex: 1;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) 8px minmax(96px, var(--notes-h, 170px));
+  background: #000;
+  color: #e2e8f0;
+}
+
+.deck-detail__viewer .lite-presenter-view .presenter-view-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 10px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+  background: var(--color-surface);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.deck-detail__viewer .lite-presenter-view .presenter-view-toolbar::-webkit-scrollbar {
+  display: none;
+}
+.deck-detail__viewer .lite-presenter-view .deck-title {
+  max-width: 180px;
+}
+
+.deck-detail__viewer .lite-presenter-view .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  min-height: 30px;
+  padding: 0 9px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-alt);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.deck-detail__viewer .lite-presenter-view .btn.ghost {
+  border-color: var(--color-border);
+  background: var(--color-surface);
+}
+.deck-detail__viewer .lite-presenter-view .btn.primary {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+.deck-detail__viewer .lite-presenter-view .btn.icon-only {
+  width: 30px;
+  min-width: 30px;
+  padding: 0;
+}
+
+.deck-detail__viewer .presenter-view-body {
+  position: relative;
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 28%);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  background: #000;
+}
+.deck-detail__viewer .lite-presenter-view .presenter-view-body .presenter-host {
+  width: 100%;
+  height: 100%;
+  border-right: 1px solid rgba(148, 163, 184, 0.18);
+  background: #000;
+}
+
+.deck-detail__viewer .lite-presenter-view .presenter-side {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  overflow-y: auto;
+  border-left: 1px solid rgba(148, 163, 184, 0.18);
+  background: #111827;
+}
+.deck-detail__viewer .presenter-side-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: var(--radius-md);
+  background: #0f172a;
+}
+.deck-detail__viewer .presenter-side-card h3 {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.deck-detail__viewer .presenter-next {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.deck-detail__viewer .lite-presenter-view .presenter-next .stage-card {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+.deck-detail__viewer .presenter-next-label,
+.deck-detail__viewer .presenter-audience-status,
+.deck-detail__viewer .lite-presenter-view .muted {
+  color: #94a3b8;
+  font-size: 12px;
+}
+.deck-detail__viewer .presenter-timer {
+  color: #f8fafc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.deck-detail__viewer .presenter-side-resizer {
+  position: absolute;
+  top: 0;
+  right: 28%;
+  bottom: 0;
+  z-index: 5;
+  width: 8px;
+  margin-right: -4px;
+  background: transparent;
+  cursor: ew-resize;
+  touch-action: none;
+}
+.deck-detail__viewer .presenter-side-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: rgba(148, 163, 184, 0.18);
+  transform: translateX(-50%);
+}
+
+.deck-detail__viewer .presenter-notes-resizer {
+  position: relative;
+  z-index: 5;
+  height: 8px;
+  background: transparent;
+  cursor: ns-resize;
+  touch-action: none;
+}
+.deck-detail__viewer .presenter-notes-resizer::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.18);
+  transform: translateY(-50%);
+}
+
+.deck-detail__viewer .lite-presenter-view .presenter-notes {
+  overflow-y: auto;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  background: #111827;
+  color: #e2e8f0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.deck-detail__viewer .presenter-notes-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.deck-detail__viewer .presenter-notes-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.deck-detail__viewer .presenter-notes pre {
+  margin: 0;
+  color: #e2e8f0;
+  font-family: inherit;
+  white-space: pre-wrap;
+}
+.deck-detail__viewer .presenter-notes-editor {
+  display: block;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: var(--radius-sm);
+  background: #020617;
+  color: #e2e8f0;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  resize: none;
+}
+
+.deck-detail__viewer .lite-presenter-view .presenter-toolbar {
+  position: absolute;
+  top: 12px;
+  right: 0;
+  bottom: 12px;
+  left: auto;
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  transform: none;
+  opacity: 1;
+  pointer-events: none;
+}
+.deck-detail__viewer
+  .lite-presenter-view
+  .presenter-toolbar.dock-right.collapsed
+  .presenter-toolbar-inner.dock-inner {
+  display: none;
+}
+.deck-detail__viewer .lite-presenter-view .toolbar-handle {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 0;
+  border-radius: 14px 0 0 14px;
+  background: rgba(18, 22, 29, 0.94);
+  color: #e2e8f0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+  box-shadow: -8px 10px 28px rgba(0, 0, 0, 0.45);
+}
+.deck-detail__viewer .lite-presenter-view .presenter-toolbar.dock-right.expanded .toolbar-handle,
+.deck-detail__viewer
+  .lite-presenter-view
+  .presenter-toolbar.dock-right.has-active-drawing-tool.collapsed
+  .toolbar-handle {
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+.deck-detail__viewer .lite-presenter-view .toolbar-handle-icon {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+}
+.deck-detail__viewer .lite-presenter-view .toolbar-handle-label {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  transform: none;
+  letter-spacing: 0.1em;
+}
+.deck-detail__viewer .lite-presenter-view .presenter-toolbar-inner.dock-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 3px;
+  min-width: 168px;
+  max-height: 100%;
+  margin-left: -1px;
+  padding: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-right: 0;
+  border-left: 0;
+  background: rgba(18, 22, 29, 0.94);
+  overflow-y: auto;
+  pointer-events: auto;
+  backdrop-filter: blur(8px);
+  box-shadow: -8px 12px 32px rgba(0, 0, 0, 0.45);
+}
+.deck-detail__viewer .lite-presenter-view .presenter-toolbar .tool-btn {
+  display: flex;
+  width: 100%;
+  height: 32px;
+  min-height: 32px;
+  flex-direction: row;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 2px 8px;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 500;
+}
+.deck-detail__viewer .lite-presenter-view .presenter-toolbar .tool-label {
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+}
+.deck-detail__viewer .lite-presenter-view .toolbar-sep {
+  width: 100%;
+  height: 1px;
+  margin: 4px 0;
+  background: rgba(148, 163, 184, 0.18);
+}
+
+.deck-detail__viewer .overview-panel {
+  position: absolute;
+  inset: 16px;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: var(--radius-lg);
+  background: #0f172a;
+  color: #e2e8f0;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.48);
+}
+.deck-detail__viewer .overview-panel::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: rgba(2, 6, 23, 0.62);
+}
+.deck-detail__viewer .panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+}
+.deck-detail__viewer .panel-heading h2,
+.deck-detail__viewer .panel-heading h3 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.deck-detail__viewer .overview-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  padding: 18px;
+  overflow: auto;
+}
+.deck-detail__viewer .overview-card {
+  display: grid;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: var(--radius-md);
+  background: #111827;
+  color: #e2e8f0;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease;
+}
+.deck-detail__viewer .overview-card:hover {
+  border-color: rgba(148, 163, 184, 0.36);
+  background: #1e293b;
+}
+.deck-detail__viewer .overview-card.active {
+  outline: 2px solid #60a5fa;
+  outline-offset: -1px;
+  background: rgba(96, 165, 250, 0.16);
+}
+.deck-detail__viewer .overview-card img,
+.deck-detail__viewer .thumbnail-fallback {
+  display: grid;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  background: #020617;
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.deck-detail__viewer .lite-presenter-view .color-swatch-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 2px 4px;
+}
+.deck-detail__viewer .lite-presenter-view .color-swatch {
+  width: 20px;
+  height: 20px;
+  justify-self: center;
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    opacity 120ms ease;
+}
+.deck-detail__viewer .lite-presenter-view .color-swatch:hover {
+  transform: scale(1.12);
+}
+.deck-detail__viewer .lite-presenter-view .color-swatch.active {
+  border-color: #fff;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22);
+}
+.deck-detail__viewer .lite-presenter-view .color-swatch.dim {
+  opacity: 0.45;
+}
+.deck-detail__viewer .lite-presenter-view .color-swatch.dim:hover {
+  opacity: 1;
+}
+
+.audience-view {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+.audience-view .stage-card {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  background: #000;
+}
+.audience-view .logical-stage {
+  position: absolute;
+  transform-origin: top left;
+  overflow: hidden;
+  background: #fff;
+}
+.audience-view .logical-stage iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+}
+.audience-view .logical-stage iframe[data-active="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+.audience-view .annotation-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.audience-view .annotation-overlay.idle {
+  pointer-events: none;
+}
+.audience-view .annotation-overlay.active {
+  pointer-events: auto;
+}
+.audience-view .laser-pointer {
+  position: absolute;
+  z-index: 5;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #ff2d2d;
+  box-shadow: 0 0 18px rgba(255, 45, 45, 0.9);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+.audience-view .spotlight-overlay,
+.audience-view .blackout-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+}
+.audience-view .blackout-overlay.black {
+  background: #000;
+}
+.audience-view .blackout-overlay.white {
+  background: #fff;
+}
+.audience-waiting {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  background: #000;
+  color: #e2e8f0;
+}
+.audience-status {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  opacity: 0.78;
+  pointer-events: none;
+}
+.audience-status.live {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.18);
+}
+.audience-status.idle {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.16);
 }

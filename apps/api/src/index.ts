@@ -11,7 +11,7 @@ import { ensureBootstrapAdmin } from "./auth/bootstrap.js";
 async function main(): Promise<void> {
   const config = loadConfig();
 
-  const prisma = createPrismaClient();
+  const prisma = createPrismaClient({ databaseUrl: config.databaseUrl });
   setPrisma(prisma);
   await applySqlitePragmas(prisma);
 

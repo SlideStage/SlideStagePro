@@ -32,6 +32,23 @@ function sanitizeTitle(title: string): string {
   return cleaned || "deck";
 }
 
+// HTTP header values must be 8-bit clean (ByteString). For non-ASCII deck
+// titles ("投资组合实证分析") we emit both:
+//   - filename="<ascii-fallback>" for legacy clients (RFC 6266 §4.1 quoted)
+//   - filename*=UTF-8''<percent-encoded> for modern clients (RFC 5987 §3.2)
+// Without this the `new Response({ headers: { "Content-Disposition" } })`
+// constructor throws `Cannot convert argument to a ByteString`.
+function buildContentDisposition(title: string): string {
+  const safe = sanitizeTitle(title);
+  const ascii =
+    safe
+      .replace(/[^\x20-\x7E]+/g, "_")
+      .replace(/["\\;]+/g, "_")
+      .trim() || "deck";
+  const encoded = encodeURIComponent(safe);
+  return `attachment; filename="${ascii}.stage"; filename*=UTF-8''${encoded}.stage`;
+}
+
 function toSummary(deck: {
   id: string;
   title: string;
@@ -257,10 +274,9 @@ export function createDeckRoutes(deps: DeckRoutesDeps): Hono<{ Variables: AuthVa
       throw new ApiError(404, "BLOB_MISSING", "Deck blob is missing from storage");
     }
     const stream = await deps.storage.getObject(version.objectKey);
-    const filename = `${sanitizeTitle(deck.title)}.stage`;
     const headers: Record<string, string> = {
       "Content-Type": "application/zip",
-      "Content-Disposition": `attachment; filename="${filename}"`,
+      "Content-Disposition": buildContentDisposition(deck.title),
       "Content-Length": String(version.sizeBytes),
       ETag: etag,
       "Cache-Control": "private, max-age=300",
