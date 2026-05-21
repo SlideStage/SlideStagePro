@@ -57,7 +57,13 @@ export function Login() {
     <div className="auth-shell">
       <div className="auth-shell__card">
         <div className="auth-shell__brand">
-          <span className="brand-dot" aria-hidden />
+          <img
+            src="/brand/slidestage-pro-mark.svg"
+            alt=""
+            width={28}
+            height={28}
+            className="brand-mark"
+          />
           <span>SlideStage Pro</span>
         </div>
         <Card title="Sign in" description="Use your work email and password.">

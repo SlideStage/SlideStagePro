@@ -21,7 +21,13 @@ export function Header() {
     <header className="app-header">
       <div className="app-header__inner">
         <Link to="/dashboard" className="app-header__brand">
-          <span className="brand-dot" aria-hidden />
+          <img
+            src="/brand/slidestage-pro-mark.svg"
+            alt=""
+            width={24}
+            height={24}
+            className="brand-mark"
+          />
           <span className="brand-name">SlideStage Pro</span>
         </Link>
         <nav className="app-header__nav" aria-label="Primary">

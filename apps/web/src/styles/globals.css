@@ -209,12 +209,11 @@ kbd {
   text-decoration: none;
 }
 
-.brand-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  background: linear-gradient(135deg, #0f172a, #475569);
+.brand-mark {
   display: inline-block;
+  flex-shrink: 0;
+  border-radius: 6px;
+  object-fit: contain;
 }
 
 .brand-name {

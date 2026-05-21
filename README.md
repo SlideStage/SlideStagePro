@@ -1,3 +1,25 @@
+<p align="center">
+  <a href="https://github.com/SlideStage/SlideStagePro">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="brand/png/slidestage-pro-logo-horizontal-on-dark@2x.png">
+      <img src="brand/png/slidestage-pro-logo-horizontal@2x.png" alt="SlideStage Pro" width="520">
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  <strong>Self-hosted <code>.stage</code> deck platform for teams.</strong><br/>
+  Shared library · notes &amp; annotations · admin invites · Docker-deployable.
+</p>
+
+<p align="center">
+  <a href="https://slidestage.dev"><img alt="Website" src="https://img.shields.io/badge/website-slidestage.dev-4F46E5?style=flat-square"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-111827?style=flat-square"></a>
+  <a href="https://github.com/SlideStage/SlideStageLite"><img alt="Lite" src="https://img.shields.io/badge/sibling-SlideStageLite-06B6D4?style=flat-square"></a>
+</p>
+
+---
+
 # SlideStage Pro
 
 Self-hosted `.stage` presentation platform built on **Prisma + SQLite + Hono +
@@ -5,6 +27,33 @@ React 19**, deployable to any VPS via Docker Compose. Pro is a thin shell around
 the Lite open-source packages (`@slidestage/core`, `@slidestage/ui`,
 `@slidestage/lite-preset`) — it adds multi-user storage, notes/annotations
 persistence, admin invites, and Docker-based deployment.
+
+### SlideStage ecosystem
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="https://github.com/SlideStage/SlideStageLite"><img src="brand/png/slidestage-mark.png" width="84" alt="SlideStageLite"></a><br/>
+      <strong>SlideStageLite</strong><br/>
+      <sub>Local-first runtime · MIT</sub><br/>
+      <sub>Open, present, convert <code>.stage</code> in any browser.</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://github.com/SlideStage/SlideStagePro"><img src="brand/png/slidestage-pro-mark.png" width="84" alt="SlideStagePro"></a><br/>
+      <strong>SlideStagePro</strong><br/>
+      <sub>Self-hosted platform · MIT</sub><br/>
+      <sub>Multi-user library, notes &amp; annotations, Docker-deployable.</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://github.com/SlideStage/slidestage-pack"><img src="brand/png/slidestage-pack-mark.png" width="84" alt="slidestage-pack"></a><br/>
+      <strong>slidestage-pack</strong><br/>
+      <sub>Agent skill packer · MIT</sub><br/>
+      <sub>Turn any HTML deck into a <code>.stage</code> file.</sub>
+    </td>
+  </tr>
+</table>
+
+---
 
 > **Status:** v0 rebuild on branch `rebuild-pro-from-zero`. See
 > [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (TBD by Agent F) for the
