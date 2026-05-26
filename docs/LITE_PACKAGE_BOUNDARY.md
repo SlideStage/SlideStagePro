@@ -46,7 +46,7 @@ Run `node scripts/check-boundaries.mjs`; it must exit 0 on every commit.
 | 5 | `apps/api/**` may not `import` `react` / `react-dom` / `react/*` / `react-dom/*` | Server importing a UI lib |
 | 6 | `apps/web/**` may not `import` `@prisma/client`, `prisma`, `fastify`, `hono`, `hono/*`, `node:fs`, `node:fs/promises`, `node:net`, `better-sqlite3`, or relative paths into `apps/api/` | Browser importing server modules |
 | 7 | No re-declaration of `manifestSchema` / `SlideStageManifestSchema` / `assertSafePath` / `assertSafeRelPath` / `isSafePath` (the symbols owned by `@slidestage/core`) | Re-implementing Lite primitives |
-| 8 | Every `file:` dependency in `package.json` must resolve to `vendor/*.tgz` (white-listed) | Non-vendor file references |
+| 8 | No `file:` dependency permitted in any `package.json` (`workspace:*` is fine for first-party Pro packages) | Local-path / vendored / patched-fork references |
 
 Forbidden literals only fire inside code, manifests, and CI scripts —
 docs are exempt so this very document is allowed to spell out the words.
@@ -63,76 +63,55 @@ docs are exempt so this very document is allowed to spell out the words.
 - Write **Pro-only** capabilities under `packages/pro-preset/`, install them
   via the `proPreset()` plugin contract that `@slidestage/core` defines.
 
-## 4. v0 dependency mode: vendored tarballs
+## 4. Dependency mode: npm semver only (current)
 
-The Lite packages are **not yet published** to npm. To unblock v0 deployment
-without violating the boundary, Pro depends on Lite via *vendored tarballs*:
-
-```text
-SlideStagePro/
-  vendor/
-    MANIFEST.json                        ← Lite git SHA + per-tarball sha256
-    slidestage-core-0.1.0.tgz            ← pnpm pack of …/Lite/packages/core
-    slidestage-ui-0.1.0.tgz
-    slidestage-lite-preset-0.1.0.tgz
-```
-
-In every Pro `package.json`:
+As of Phase A.A4 (2026-05-26), Pro consumes Lite **strictly by semver from
+the public npm registry**. The previous `vendor/*.tgz` v0 bridge has been
+removed entirely:
 
 ```jsonc
+// every Pro package.json that needs a Lite package
 "dependencies": {
-  "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
-  "@slidestage/ui":   "file:../../vendor/slidestage-ui-0.1.0.tgz",
-  "@slidestage/lite-preset": "file:../../vendor/slidestage-lite-preset-0.1.0.tgz"
+  "@slidestage/core":        "^0.1.1",
+  "@slidestage/ui":          "^0.1.1",
+  "@slidestage/lite-preset": "^0.1.1"
 }
 ```
 
-The boundary checker whitelists `file:` references whose path component
-contains `/vendor/` and ends in `.tgz`; anything else fails CI.
+The boundary checker now rejects **every** `file:` reference in **any**
+`package.json` dependency field. `pnpm-workspace.yaml` carries no overrides
+mapping Lite names to local files. `vendor/`, `scripts/sync-vendor.mjs`,
+and `vendor/README.md` were deleted in the same change.
 
-### Re-syncing the tarballs
+If a Lite bug blocks Pro mid-release, see §6 FAQ "What if I find a bug in
+`@slidestage/core` that's blocking Pro?" for the pnpm overrides escape
+hatch — but the override **must** point at a re-packed upstream tarball
+located outside this repo, and must be removed when the upstream patch
+ships.
 
-```bash
-cd ../SlideStageLite
-pnpm -r --filter "./packages/*" build       # produce dist/
+### Historical context (kept for reference)
 
-cd ../SlideStagePro
-pnpm sync:vendor                            # runs scripts/sync-vendor.mjs
-```
+Between v0 boot (commit `5418004`, Lite `0.1.0`) and Phase A.A4
+(2026-05-26), Pro depended on Lite via committed `vendor/*.tgz` files:
+`pnpm pack`'d from a sibling SlideStageLite checkout, listed in each
+`package.json` as `file:../../vendor/slidestage-<name>-0.1.0.tgz`,
+synced by `pnpm sync:vendor` → `scripts/sync-vendor.mjs`, and pinned via
+a `pnpm-workspace.yaml > overrides:` block. The boundary checker
+whitelisted `file:./vendor/*.tgz` and rejected every other `file:` ref.
+That whole bridge is gone now; the npm pull replaces it 1:1.
 
-The sync script:
+## 5. Exit criteria — completed
 
-1. verifies `vendor/` exists, creates it if not;
-2. for each of `@slidestage/core`, `@slidestage/ui`, `@slidestage/lite-preset`:
-   - confirms `…/packages/<name>/dist` exists (else fails with a hint);
-   - runs `pnpm pack --pack-destination vendor/`;
-   - renames the output to `slidestage-<name>-<version>.tgz`;
-3. writes `vendor/MANIFEST.json` with the Lite git SHA and per-file sha256.
-
-`MANIFEST.json` is committed alongside the tarballs so reviewers can verify
-*which* upstream commit was packaged without re-running the sync.
-
-## 5. Exit criteria: switch to npm semver
-
-When the Lite packages are published to a registry Pro can reach:
-
-1. Pick a published Lite version, e.g. `@slidestage/core@0.2.0`.
-2. In every Pro `package.json`, replace
-   `"file:../../vendor/slidestage-core-0.1.0.tgz"` with `"^0.2.0"` (and same
-   for `ui` / `lite-preset`).
-3. Update `pnpm-workspace.yaml` to **remove** the `overrides:` block that
-   pins these names to `file:./vendor/...`.
-4. `pnpm install` to regenerate `pnpm-lock.yaml`.
-5. Delete `vendor/`, `scripts/sync-vendor.mjs`, and `vendor/README.md`.
-6. In `scripts/check-boundaries.mjs`, tighten the rule:
-   ```js
-   const ALLOW_VENDORED_TARBALL = /^$/; // reject every file: reference outright
-   ```
-7. CI must pass with the tightened checker before merging.
-8. Update this document's §4 to say "v0 vendoring is removed; semver only".
-
-After that, the boundary is purely an `npm` boundary: Lite is a third-party
-dependency of Pro, full stop.
+| # | Step | Status |
+|---|---|---|
+| 1 | Lite packages published to npm registry | ✅ done (`0.1.1`) |
+| 2 | Pro `package.json` switched to `^0.1.1` semver | ✅ done (Phase A.A3) |
+| 3 | `pnpm-workspace.yaml > overrides:` block removed | ✅ done (Phase A.A3) |
+| 4 | `pnpm install` regenerates lockfile against npm | ✅ done (Phase A.A3) |
+| 5 | `vendor/` + `scripts/sync-vendor.mjs` + `vendor/README.md` deleted | ✅ done (Phase A.A4) |
+| 6 | `check-boundaries.mjs` tightened to reject all `file:` refs | ✅ done (Phase A.A4) |
+| 7 | CI passes with tightened checker | 🟡 next: Phase A.A5 + Phase A.A6 |
+| 8 | This document's §4 reflects npm-only state | ✅ done (this commit) |
 
 ## 6. FAQ
 
@@ -157,11 +136,22 @@ No. Either:
 
 **Q. What if I find a bug in `@slidestage/core` that's blocking Pro?**
 
-File the bug upstream. While waiting for a release, `pnpm overrides` in
-`pnpm-workspace.yaml` (already used for the vendor pinning) can substitute a
-patched tarball under the same name — but that tarball must come from the
-Lite repo (re-pack with `sync-vendor.mjs`) and the override must be removed
-when the upstream fix ships. Never patch the dependency in `node_modules`.
+File the bug upstream. While waiting for the next npm release, you can
+substitute a patched build via `pnpm.overrides` in `package.json`:
+
+```jsonc
+"pnpm": {
+  "overrides": {
+    "@slidestage/core": "file:/abs/path/to/slidestage-core-patched.tgz"
+  }
+}
+```
+
+The patched tarball must be re-packed from a fork of SlideStageLite that
+sits **outside this repo** (the boundary checker rejects every `file:`
+reference inside Pro's own `package.json` files, and CI will catch a
+checked-in override). Remove the override when the upstream patch ships
+to npm. Never patch the dependency in `node_modules`.
 
 **Q. Does the boundary apply to test fixtures and docs?**
 

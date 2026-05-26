@@ -2,8 +2,9 @@
 #
 # SlideStagePro API — Node 22 + Hono + Prisma + Better Auth
 #
-# Build context: monorepo ROOT (so vendor/*.tgz, prisma/, and workspace
-# packages are reachable in a single COPY pass).
+# Build context: monorepo ROOT (so prisma/ + workspace packages are reachable
+# in a single COPY pass). Lite packages come from the public npm registry,
+# resolved during `pnpm install` below.
 #
 #   docker build -f infra/docker/Dockerfile.api -t slidestage-pro/api .
 #
@@ -36,7 +37,6 @@ RUN apk add --no-cache python3 make g++ git
 # Workspace manifest layer (cache-friendly: re-install only when manifests change)
 COPY pnpm-workspace.yaml pnpm-lock.yaml .npmrc package.json ./
 COPY prisma ./prisma
-COPY vendor ./vendor
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/api/scripts ./apps/api/scripts
 COPY apps/web/package.json ./apps/web/package.json
@@ -86,7 +86,6 @@ COPY --from=build /app/packages/pro-shared/package.json ./packages/pro-shared/pa
 COPY --from=build /app/packages/pro-preset/dist ./packages/pro-preset/dist
 COPY --from=build /app/packages/pro-preset/package.json ./packages/pro-preset/package.json
 COPY --from=build /app/prisma ./prisma
-COPY --from=build /app/vendor ./vendor
 COPY --from=build /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/.npmrc ./.npmrc

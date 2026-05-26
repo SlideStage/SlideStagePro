@@ -22,7 +22,7 @@
     "test": "echo 'no tests yet' && exit 0"
   },
   "dependencies": {
-    "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
+    "@slidestage/core": "^0.1.1",
     "@slidestage/pro-shared": "workspace:*"
   },
   "devDependencies": {

@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@slidestage/core@0.1.0': file:./vendor/slidestage-core-0.1.0.tgz
-  '@slidestage/ui@0.1.0': file:./vendor/slidestage-ui-0.1.0.tgz
-  '@slidestage/lite-preset@0.1.0': file:./vendor/slidestage-lite-preset-0.1.0.tgz
-
 importers:
 
   .:
@@ -26,8 +21,8 @@ importers:
         specifier: ^6.19.3
         version: 6.19.3(prisma@6.19.3(typescript@6.0.3))(typescript@6.0.3)
       '@slidestage/core':
-        specifier: file:../../vendor/slidestage-core-0.1.0.tgz
-        version: file:vendor/slidestage-core-0.1.0.tgz
+        specifier: ^0.1.1
+        version: 0.1.1
       '@slidestage/pro-shared':
         specifier: workspace:*
         version: link:../../packages/pro-shared
@@ -69,11 +64,11 @@ importers:
   apps/web:
     dependencies:
       '@slidestage/core':
-        specifier: file:../../vendor/slidestage-core-0.1.0.tgz
-        version: file:vendor/slidestage-core-0.1.0.tgz
+        specifier: ^0.1.1
+        version: 0.1.1
       '@slidestage/lite-preset':
-        specifier: file:../../vendor/slidestage-lite-preset-0.1.0.tgz
-        version: file:vendor/slidestage-lite-preset-0.1.0.tgz(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^0.1.1
+        version: 0.1.1(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@slidestage/pro-preset':
         specifier: workspace:*
         version: link:../../packages/pro-preset
@@ -81,8 +76,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/pro-shared
       '@slidestage/ui':
-        specifier: file:../../vendor/slidestage-ui-0.1.0.tgz
-        version: file:vendor/slidestage-ui-0.1.0.tgz(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: ^0.1.1
+        version: 0.1.1(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       better-auth:
         specifier: ^1.4.0
         version: 1.6.11(@prisma/client@6.19.3(prisma@6.19.3(typescript@6.0.3))(typescript@6.0.3))(better-sqlite3@12.10.0)(prisma@6.19.3(typescript@6.0.3))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vitest@4.1.6(@types/node@22.19.19)(jsdom@29.1.1(@noble/hashes@2.2.0))(vite@8.0.13(@types/node@22.19.19)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)))
@@ -133,8 +128,8 @@ importers:
   packages/pro-preset:
     dependencies:
       '@slidestage/core':
-        specifier: file:../../vendor/slidestage-core-0.1.0.tgz
-        version: file:vendor/slidestage-core-0.1.0.tgz
+        specifier: ^0.1.1
+        version: 0.1.1
       '@slidestage/pro-shared':
         specifier: workspace:*
         version: link:../pro-shared
@@ -580,6 +575,7 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-s390x-gnu@1.0.1':
     resolution: {integrity: sha512-0frlsT/f4Ft6I7SMESTKnF3cZsdicQn1dCMkF/jT9wDLE+gGoiQfv1nmT9e+s7s/fekvvy6tZM2jHvI2tkbJDQ==}
@@ -628,30 +624,24 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@slidestage/core@file:vendor/slidestage-core-0.1.0.tgz':
-    resolution: {integrity: sha512-bfKvqgPn3XJpyZ/RJrXBg9Lakz/y7qBNNC5Hx+IKkOiPXoU8wPh1fMV90CHHC5B5CZSV4Me+ty0xlMpPLf0Acw==, tarball: file:vendor/slidestage-core-0.1.0.tgz}
-    version: 0.1.0
+  '@slidestage/core@0.1.1':
+    resolution: {integrity: sha512-xhV/ufQx15UbxajysMbM3y2dg22RGwe90YyxrK1nxSPjyWSEHG8YSQSgc6HAunPV9ooJmXkyUbzRTbLu5l+Umw==}
     engines: {node: '>=20'}
 
-  '@slidestage/lite-preset@file:vendor/slidestage-lite-preset-0.1.0.tgz':
-    resolution: {integrity: sha512-/B3WyQjFScp1LXqAfDu44Sm+g1yGow+Bt0Wcb+Y/MQ8oGv7DW5/Yd95edqvVneBoZOojEs3xcxFC5CdW5PAXTA==, tarball: file:vendor/slidestage-lite-preset-0.1.0.tgz}
-    version: 0.1.0
+  '@slidestage/lite-preset@0.1.1':
+    resolution: {integrity: sha512-CX5W4MxzpAkBYavf6HUmrASyMjTcHZEIdjMp0bCKQXIlWOILUrm2/harr/mPPjwzx3iE2VFPhBEjIxG8fEZzSA==}
     engines: {node: '>=20'}
     peerDependencies:
       '@tauri-apps/api': ^2.11.0
-      '@tauri-apps/plugin-global-shortcut': ^2.3.1
       lucide-react: ^1.14.0
       react: ^19.2.6
       react-dom: ^19.2.6
     peerDependenciesMeta:
       '@tauri-apps/api':
         optional: true
-      '@tauri-apps/plugin-global-shortcut':
-        optional: true
 
-  '@slidestage/ui@file:vendor/slidestage-ui-0.1.0.tgz':
-    resolution: {integrity: sha512-I3KBUkRvmFzG6IDJ7tpcKYY2THy01H33cZIE8Sh5qaneBrouAskTahV14bXmqLjiG4oVTj8CPJ9NPjxanLpuAQ==, tarball: file:vendor/slidestage-ui-0.1.0.tgz}
-    version: 0.1.0
+  '@slidestage/ui@0.1.1':
+    resolution: {integrity: sha512-LOtWgPYHR8T2EqmFaUV2gee0on9jiumPeLmLnM3DXUJhzzeWiI7TbPfIMzxQx+6U3FAGrqlbQMQTX3djkFD7UQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@tauri-apps/api': ^2.11.0
@@ -1852,22 +1842,22 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@slidestage/core@file:vendor/slidestage-core-0.1.0.tgz':
+  '@slidestage/core@0.1.1':
     dependencies:
       fflate: 0.8.3
       zod: 4.4.3
 
-  '@slidestage/lite-preset@file:vendor/slidestage-lite-preset-0.1.0.tgz(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@slidestage/lite-preset@0.1.1(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
-      '@slidestage/core': file:vendor/slidestage-core-0.1.0.tgz
-      '@slidestage/ui': file:vendor/slidestage-ui-0.1.0.tgz(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@slidestage/core': 0.1.1
+      '@slidestage/ui': 0.1.1(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       lucide-react: 1.16.0(react@19.2.6)
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
 
-  '@slidestage/ui@file:vendor/slidestage-ui-0.1.0.tgz(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
+  '@slidestage/ui@0.1.1(lucide-react@1.16.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
-      '@slidestage/core': file:vendor/slidestage-core-0.1.0.tgz
+      '@slidestage/core': 0.1.1
       lucide-react: 1.16.0(react@19.2.6)
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)

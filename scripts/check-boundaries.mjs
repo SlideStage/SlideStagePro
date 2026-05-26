@@ -10,8 +10,9 @@
 //   5. apps/api MUST NOT import "react" / "react-dom".
 //   6. apps/web MUST NOT import server-only modules ("prisma", local db/storage).
 //
-// Vendored Lite tarballs at vendor/*.tgz ARE allowed as a v0 bridge until the Lite
-// packages are published to npm. See docs/LITE_PACKAGE_BOUNDARY.md.
+// As of Phase A.A4 (2026-05-26) the vendor/ bridge is removed: Lite packages
+// come from npm by semver only. Any `file:` reference in any package.json
+// dependency field is now an outright violation. See docs/LITE_PACKAGE_BOUNDARY.md.
 //
 // Exit codes:
 //   0 — all checks passed
@@ -68,8 +69,6 @@ const IGNORE_PATH_SUBSTRINGS = [
   // The boundary checker's own test fixture file literally writes invalid
   // imports as test inputs to prove the checker catches them.
   "scripts/check-boundaries.test.mjs",
-  // sync-vendor.mjs intentionally references the Lite checkout to PACK from it.
-  "scripts/sync-vendor.mjs",
   // Docs are reference material that must be able to QUOTE forbidden strings
   // as bad-examples ("don't do this") without tripping the checker. The
   // boundary rules apply to *code*, not to prose explaining the rules.
@@ -167,14 +166,12 @@ const CORE_REIMPL_PATTERNS = [
 ];
 
 /**
- * Allow-list for the vendor/ workflow.
- * The boundary checker explicitly allows references that resolve to the
- * repo-root vendor/ directory and end in .tgz. Both `file:./vendor/foo.tgz`
- * (from the repo root) and `file:../../vendor/foo.tgz` (from apps/<name>)
- * are accepted; what matters is that the path component contains "/vendor/"
- * and the file is a .tgz tarball, never a directory or a non-tarball file.
+ * Vendor allow-list is empty after Phase A.A4 (2026-05-26).
+ * Any `file:` reference in any package.json dependency field is now a
+ * violation. Lite packages must come from npm by semver (`^0.1.1` etc).
+ * The regex below never matches any input.
  */
-const ALLOW_VENDORED_TARBALL = /^file:(?:\.\/|(?:\.\.\/)+)vendor\/[^"']+\.tgz$/;
+const ALLOW_VENDORED_TARBALL = /^$/;
 
 async function walk(dir, acc = []) {
   if (!existsSync(dir)) return acc;

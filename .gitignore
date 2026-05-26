@@ -50,6 +50,3 @@ pnpm-debug.log*
 *.swp
 *.swo
 *~
-
-# Vendor tarball sources kept (tarballs themselves are committed)
-# do NOT ignore vendor/*.tgz

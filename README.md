@@ -55,12 +55,15 @@ persistence, admin invites, and Docker-based deployment.
 ---
 
 > **Status — v0 feature-complete (on branch `rebuild-pro-from-zero`).**
-> The full stack — API, web, packages, schema, vendor tarballs, Docker
-> compose, nginx reverse-proxy, boundary checker (+ its own self-test),
-> fixture generator — is implemented and passes `check:boundaries` /
-> `typecheck` / 18 tests / `build`. The `docker compose build && up`
+> The full stack — API, web, packages, schema, Docker compose, nginx
+> reverse-proxy, boundary checker (+ its own self-test), fixture
+> generator — is implemented and passes `check:boundaries` /
+> `typecheck` / 18 tests / `build`. As of Phase A.A4 (2026-05-26) Lite
+> packages come from the public npm registry (the previous `vendor/`
+> tarball bridge has been removed). The `docker compose build && up`
 > path is wired and statically validated; running it requires a Docker
-> daemon (Docker Desktop / OrbStack / Colima).
+> daemon (Docker Desktop / OrbStack / Colima) with outbound network
+> access to `registry.npmjs.org` at build time.
 >
 > Documentation:
 > [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) ·
@@ -82,14 +85,12 @@ SlideStagePro/
 ├── prisma/
 │   ├── schema.prisma       Single SQLite schema (Better Auth + business + invites)
 │   └── migrations/         Versioned SQL migrations (auto-applied on boot)
-├── vendor/                 Vendored Lite tarballs (v0 only — removed once Lite ships to npm)
 ├── infra/
 │   ├── docker/             Dockerfile.api, Dockerfile.web, api-entrypoint.sh
 │   └── nginx/              edge nginx.conf + in-web-image web.conf
 ├── scripts/
-│   ├── check-boundaries.mjs       CI gate: enforce Lite ↔ Pro boundary
+│   ├── check-boundaries.mjs       CI gate: enforce Lite ↔ Pro boundary (rejects all file: refs)
 │   ├── check-boundaries.test.mjs  Self-test: forge violations, assert checker fails
-│   ├── sync-vendor.mjs            Re-pack Lite tarballs into vendor/
 │   └── build-fixtures.mjs         Emit canonical .stage fixtures for manual QA
 ├── fixtures/               Smoke-test .stage files (valid + 3 invalid)
 ├── docs/                   Architecture · API · Auth · Deployment · Boundary
@@ -103,12 +104,8 @@ SlideStagePro/
 # Optional for local dev: dev mode has safe local defaults.
 # Copy .env.example to .env when you want custom secrets/admin credentials.
 
-# 2) regenerate vendor tarballs from your local Lite checkout
-#    (skip if you already have ../SlideStageLite at the right commit + vendor/*.tgz is fresh)
-cd ../SlideStageLite && pnpm -r --filter "./packages/*" build
-cd ../SlideStagePro && pnpm sync:vendor
-
-# 3) install + migrate + run
+# 2) install + migrate + run
+#    @slidestage/{core,ui,lite-preset} are fetched from the npm registry.
 pnpm install
 pnpm db:migrate:dev
 pnpm dev                # runs apps/api + apps/web in parallel
@@ -148,17 +145,17 @@ All six green = the diff is safe to merge.
 
 ## Lite ↔ Pro boundary
 
-Pro **never** copies Lite source code. It consumes Lite packages by semver:
+Pro **never** copies Lite source code. It consumes Lite packages by semver
+from the public npm registry:
 
 ```json
-"@slidestage/core": "^0.1.0",
-"@slidestage/ui":   "^0.1.0",
-"@slidestage/lite-preset": "^0.1.0"
+"@slidestage/core": "^0.1.1",
+"@slidestage/ui":   "^0.1.1",
+"@slidestage/lite-preset": "^0.1.1"
 ```
 
-In v0, while the Lite packages have not yet been published to a registry, those
-specifiers are temporarily pinned to `file:./vendor/slidestage-*-<version>.tgz`.
-See [`vendor/README.md`](vendor/README.md) for the upgrade path.
+(As of Phase A.A4, 2026-05-26, the previous `vendor/*.tgz` bridge has been
+removed; any `file:` dependency in any `package.json` is now a CI violation.)
 
 Forbidden patterns (enforced by `scripts/check-boundaries.mjs`):
 

@@ -2,7 +2,8 @@
 #
 # SlideStagePro Web — React 19 + Vite static bundle served by nginx
 #
-# Build context: monorepo ROOT (needs vendor/*.tgz for @slidestage/* deps).
+# Build context: monorepo ROOT (Lite @slidestage/* deps come from the public
+# npm registry, resolved during `pnpm install` below).
 #
 #   docker build -f infra/docker/Dockerfile.web -t slidestage-pro/web .
 #
@@ -21,9 +22,8 @@ ENV PNPM_HOME=/pnpm \
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 WORKDIR /app
 
-# Workspace manifests + vendor tarballs (cache-friendly layer).
+# Workspace manifests (cache-friendly layer; @slidestage/* are fetched from npm).
 COPY pnpm-workspace.yaml pnpm-lock.yaml .npmrc package.json ./
-COPY vendor ./vendor
 COPY apps/api/package.json ./apps/api/package.json
 COPY apps/web/package.json ./apps/web/package.json
 COPY packages/pro-preset/package.json ./packages/pro-preset/package.json

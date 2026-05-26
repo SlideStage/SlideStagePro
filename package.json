@@ -21,7 +21,6 @@
     "check:boundaries:self-test": "node scripts/check-boundaries.test.mjs",
     "fixtures": "node scripts/build-fixtures.mjs",
     "fixtures:check": "node scripts/build-fixtures.mjs --check",
-    "sync:vendor": "node scripts/sync-vendor.mjs",
     "db:generate": "pnpm --filter @slidestage/pro-api db:generate",
     "db:migrate": "pnpm --filter @slidestage/pro-api db:migrate",
     "db:migrate:dev": "pnpm --filter @slidestage/pro-api db:migrate:dev",

@@ -221,12 +221,21 @@ presence of the plugin in the bundle is how the app expresses "this is
 Pro"**, not a boolean flag. This is the canonical way to keep Lite source
 free of edition branches.
 
-## 10. Vendor tarball bridge (temporary)
+## 10. Dependency bridge to Lite (npm semver)
 
-Until the Lite packages are published to npm, Pro consumes them as
-vendored tarballs in `vendor/` (committed). `scripts/sync-vendor.mjs`
-regenerates them from a local Lite checkout. See
-[`LITE_PACKAGE_BOUNDARY.md`](LITE_PACKAGE_BOUNDARY.md) for the upgrade path.
+Pro consumes the three Lite packages strictly by semver from the public npm
+registry:
+
+```jsonc
+"@slidestage/core":        "^0.1.1",
+"@slidestage/ui":          "^0.1.1",
+"@slidestage/lite-preset": "^0.1.1"
+```
+
+The previous `vendor/*.tgz` v0 bridge was removed during Phase A.A4
+(2026-05-26); any `file:` dependency in any `package.json` is now a CI
+violation (see `scripts/check-boundaries.mjs`). For the full rationale and
+upgrade history, see [`LITE_PACKAGE_BOUNDARY.md`](LITE_PACKAGE_BOUNDARY.md).
 
 ## 11. Non-goals for v0
 

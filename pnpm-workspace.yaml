@@ -15,8 +15,3 @@ onlyBuiltDependencies:
   - better-sqlite3
   - esbuild
   - prisma
-
-overrides:
-  "@slidestage/core@0.1.0": "file:./vendor/slidestage-core-0.1.0.tgz"
-  "@slidestage/ui@0.1.0": "file:./vendor/slidestage-ui-0.1.0.tgz"
-  "@slidestage/lite-preset@0.1.0": "file:./vendor/slidestage-lite-preset-0.1.0.tgz"

@@ -40,15 +40,11 @@ Then edit `.env`:
 Do **not** commit `.env`. The compose file uses `${VAR:?...}` syntax so
 missing required vars fail fast with a clear error.
 
-### 2.2 (If Lite packages haven't been published to npm yet) refresh vendor
-
-```bash
-cd ../SlideStageLite && pnpm -r --filter "./packages/*" build
-cd ../SlideStagePro && pnpm sync:vendor
-```
-
-The Docker build uses `vendor/*.tgz` from disk, so these tarballs must be
-present (and committed) before `docker compose build`.
+> **Note**: as of Phase A.A4 (2026-05-26), the previous `vendor/*.tgz`
+> bridge has been removed. The Docker build fetches `@slidestage/core`,
+> `@slidestage/ui`, and `@slidestage/lite-preset` from the public npm
+> registry during `pnpm install`. Build hosts therefore need outbound
+> network access to `registry.npmjs.org` at build time.
 
 ## 3. Build & launch
 

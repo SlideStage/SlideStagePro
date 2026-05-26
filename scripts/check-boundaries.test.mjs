@@ -57,6 +57,19 @@ const CASES = [
     expectRule: "non-vendor-file-ref",
   },
   {
+    // Phase A.A4: vendor/ tarballs are no longer allowed either. ANY file:
+    // reference fails. Without this case the regression would be silent.
+    name: "vendor-tarball-now-banned",
+    file: "apps/web/package.json",
+    content: JSON.stringify({
+      name: "violator-web",
+      dependencies: {
+        "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
+      },
+    }, null, 2),
+    expectRule: "non-vendor-file-ref",
+  },
+  {
     name: "lite-relative-import",
     file: "apps/api/src/forbidden.ts",
     content: `import { foo } from "../../../SlideStageLite/packages/core/src/index.js";\nexport {};\n`,

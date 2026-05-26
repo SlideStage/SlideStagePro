@@ -12,11 +12,11 @@
     "test": "vitest run --reporter=verbose"
   },
   "dependencies": {
-    "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
-    "@slidestage/lite-preset": "file:../../vendor/slidestage-lite-preset-0.1.0.tgz",
+    "@slidestage/core": "^0.1.1",
+    "@slidestage/lite-preset": "^0.1.1",
     "@slidestage/pro-preset": "workspace:*",
     "@slidestage/pro-shared": "workspace:*",
-    "@slidestage/ui": "file:../../vendor/slidestage-ui-0.1.0.tgz",
+    "@slidestage/ui": "^0.1.1",
     "better-auth": "^1.4.0",
     "fflate": "^0.8.2",
     "lucide-react": "^1.14.0",

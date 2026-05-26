@@ -23,7 +23,7 @@
   "dependencies": {
     "@hono/node-server": "^1.18.0",
     "@prisma/client": "^6.19.3",
-    "@slidestage/core": "file:../../vendor/slidestage-core-0.1.0.tgz",
+    "@slidestage/core": "^0.1.1",
     "@slidestage/pro-shared": "workspace:*",
     "better-auth": "^1.4.0",
     "better-sqlite3": "^12.4.0",
