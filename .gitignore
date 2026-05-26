@@ -29,8 +29,10 @@ e2e-storage/
 *.sqlite-journal
 *.sqlite-wal
 *.sqlite-shm
-data/
-storage/
+# Anchor `data/` and `storage/` to repo root — without the leading slash
+# they also match `apps/api/src/storage/` (a real source directory).
+/data/
+/storage/
 
 # Logs
 *.log
