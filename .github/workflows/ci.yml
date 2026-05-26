@@ -1,0 +1,102 @@
+name: CI
+
+# Default CI gate for SlideStage Pro (monorepo: apps/{api,web} +
+# packages/{pro-preset,pro-shared}).
+#
+# Triggers:
+#   - Every PR targeting main.
+#   - Every push to main.
+#   - workflow_dispatch (manual replay button on the Actions tab).
+#
+# Single job (`check`) runs the same gate the user runs locally with
+# `pnpm check`:
+#   1. pnpm install --frozen-lockfile
+#   2. pnpm db:generate            → Prisma client into node_modules
+#   3. pnpm check:boundaries       → enforce Lite-package boundary rules
+#   4. pnpm typecheck              → tsc -b across the workspace graph
+#   5. pnpm test                   → vitest unit + integration suite
+#   6. pnpm build                  → tsup packages + tsc/vite apps
+#
+# Convention pinned to match Lite's release-windows.yml + Pro's
+# `package.json > packageManager`:
+#   - pnpm 11.1.3
+#   - Node 22 (Pro `engines.node >= 22`)
+#   - `actions/setup-node@v4` with `cache: pnpm`
+#   - `pnpm install --frozen-lockfile` so the lockfile is authoritative
+#
+# Notes:
+#   - No Playwright/e2e job (yet). When Pro grows browser-driven
+#     coverage, add a parallel `e2e` job mirroring Lite's ci.yml.
+#   - `pnpm db:generate` is required *before* typecheck because
+#     `@slidestage/pro-api` imports types from the generated
+#     `@prisma/client` module. The step itself doesn't touch
+#     production data; it only writes to node_modules.
+#   - Docker / ghcr.io packaging lives in `release.yml`, not here.
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Boundaries + typecheck + unit + build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.3
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+
+      - name: Install dependencies
+        # `--frozen-lockfile` ensures CI never silently bumps a version;
+        # mismatches surface as install failures here rather than as
+        # behavior drift later.
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        # `@slidestage/pro-api`'s `src/**/*.ts` imports types from the
+        # generated `@prisma/client`. Without this step `pnpm typecheck`
+        # cannot resolve them.
+        run: pnpm db:generate
+
+      - name: Check Lite package boundary
+        # Enforces `.cursor/rules/lite-package-boundary.mdc`:
+        #   - Pro depends only on @slidestage/{core,ui,lite-preset} by
+        #     semver — never on file:../SlideStageLite or deep imports.
+        #   - Pro packages must not patch Lite source.
+        run: pnpm check:boundaries
+
+      - name: Typecheck (tsc -b across workspaces)
+        run: pnpm typecheck
+
+      - name: Vitest (unit + integration)
+        # Each workspace declares its own `test` script; `pnpm -r test`
+        # iterates and runs them in topological order.
+        run: pnpm test
+
+      - name: Build (tsup packages + tsc/vite apps)
+        # Final gate: every package and app must build cleanly. The
+        # built artefacts feed the `release.yml` Docker images.
+        run: pnpm build

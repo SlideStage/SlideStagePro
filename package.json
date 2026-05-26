@@ -21,15 +21,20 @@
     "check:boundaries:self-test": "node scripts/check-boundaries.test.mjs",
     "fixtures": "node scripts/build-fixtures.mjs",
     "fixtures:check": "node scripts/build-fixtures.mjs --check",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
     "db:generate": "pnpm --filter @slidestage/pro-api db:generate",
     "db:migrate": "pnpm --filter @slidestage/pro-api db:migrate",
     "db:migrate:dev": "pnpm --filter @slidestage/pro-api db:migrate:dev",
     "db:seed": "pnpm --filter @slidestage/pro-api db:seed",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up -d",
-    "docker:down": "docker compose down"
+    "docker:down": "docker compose down",
+    "dev:link-lite": "node scripts/dev-link-lite.mjs",
+    "dev:link-lite:unlink": "node scripts/dev-link-lite.mjs --unlink"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "fflate": "^0.8.2"
   }
 }

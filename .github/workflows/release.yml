@@ -1,0 +1,124 @@
+name: Release
+
+# Tag-driven Docker release pipeline for SlideStage Pro.
+#
+# How it works:
+#   1. Developer writes a changeset (`pnpm changeset`), gets PR merged.
+#   2. After merge, runs `pnpm version-packages` to consume the changeset,
+#      bump `apps/api/package.json` + `apps/web/package.json` to the new
+#      version, regenerate `CHANGELOG.md`, and commit.
+#   3. Tags the bump commit: `git tag v0.1.1 && git push origin v0.1.1`.
+#   4. *This* workflow reacts to the tag push:
+#      - Builds `infra/docker/Dockerfile.api` → ghcr.io/slidestage/pro-api
+#      - Builds `infra/docker/Dockerfile.web` → ghcr.io/slidestage/pro-web
+#      - Pushes both with `:v0.1.1` (immutable) + `:latest` (floating).
+#      - Both images are also tagged with the short SHA for traceability.
+#
+# Required repository secrets:
+#   None — `GITHUB_TOKEN` (automatically provided) has `packages: write`
+#   thanks to the permissions block below, which is all `docker/login-action`
+#   needs to push to `ghcr.io/<owner>/<image>`.
+#
+# Manual override:
+#   workflow_dispatch runs against the branch you pick, treating
+#   `inputs.version` as the tag. Useful for rebuilding a previously
+#   published version after a Dockerfile-only fix.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to publish (e.g. v0.1.1). Must already exist as a git ref.'
+        required: true
+
+permissions:
+  contents: read
+  packages: write # required by docker/login-action for ghcr.io
+
+concurrency:
+  # Serialize releases — a second tag push while one is mid-build must wait
+  # rather than racing for the same image tag.
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  docker:
+    name: Build + push ${{ matrix.image }} to GHCR
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: pro-api
+            dockerfile: infra/docker/Dockerfile.api
+          - image: pro-web
+            dockerfile: infra/docker/Dockerfile.web
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        # Tag push gives us refs/tags/vX.Y.Z; workflow_dispatch lets the
+        # user provide the version explicitly. Either way, normalize to
+        # the bare semver (no leading `v`) for image tagging.
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF##*/}"
+          fi
+          # Strip leading "v" for the image tag (Docker convention).
+          SEMVER="${VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "semver=$SEMVER" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build + push ${{ matrix.image }}
+        # Build context is the repo root because `Dockerfile.{api,web}`
+        # COPY from `apps/`, `packages/`, `prisma/`, `pnpm-workspace.yaml`,
+        # etc.; a sub-context would lose those.
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.version.outputs.semver }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:sha-${{ steps.version.outputs.short_sha }}
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
+          labels: |
+            org.opencontainers.image.title=SlideStage Pro · ${{ matrix.image }}
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,scope=${{ matrix.image }},mode=max
+
+      - name: Summarize publication
+        run: |
+          {
+            echo "## Pushed \`${{ matrix.image }}\`"
+            echo ""
+            echo "| Tag | Pulls as |"
+            echo "|---|---|"
+            echo "| \`${{ steps.version.outputs.version }}\` | \`ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.version.outputs.version }}\` |"
+            echo "| \`${{ steps.version.outputs.semver }}\` | \`ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ steps.version.outputs.semver }}\` |"
+            echo "| \`sha-${{ steps.version.outputs.short_sha }}\` | \`ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:sha-${{ steps.version.outputs.short_sha }}\` |"
+            echo "| \`latest\` | \`ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest\` |"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -69,6 +69,13 @@ const IGNORE_PATH_SUBSTRINGS = [
   // The boundary checker's own test fixture file literally writes invalid
   // imports as test inputs to prove the checker catches them.
   "scripts/check-boundaries.test.mjs",
+  // The dev-link-lite helper deliberately generates `link:../SlideStageLite/...`
+  // references at runtime (writes them into package.json's pnpm.overrides) so
+  // the developer can test against an in-progress Lite checkout. The literal
+  // appears as a TEMPLATE STRING inside the script; running the script and
+  // committing the resulting package.json is what's forbidden, and that's
+  // caught by `checkPackageJsonLiteRefs` on the (modified) package.json itself.
+  "scripts/dev-link-lite.mjs",
   // Docs are reference material that must be able to QUOTE forbidden strings
   // as bad-examples ("don't do this") without tripping the checker. The
   // boundary rules apply to *code*, not to prose explaining the rules.
