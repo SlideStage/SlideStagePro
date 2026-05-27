@@ -11,6 +11,7 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - '@slidestage/brand@0.1.0'
+  - '@slidestage/brand@0.2.0'
 
 onlyBuiltDependencies:
   - "@prisma/client"

@@ -12,8 +12,8 @@ importers:
         specifier: ^2.31.0
         version: 2.31.0(@types/node@25.9.0)
       '@slidestage/brand':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       fflate:
         specifier: ^0.8.2
         version: 0.8.3
@@ -70,8 +70,8 @@ importers:
   apps/web:
     dependencies:
       '@slidestage/brand':
-        specifier: ^0.1.0
-        version: 0.1.0
+        specifier: ^0.2.0
+        version: 0.2.0
       '@slidestage/core':
         specifier: ^0.1.1
         version: 0.1.1
@@ -715,9 +715,10 @@ packages:
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
 
-  '@slidestage/brand@0.1.0':
-    resolution: {integrity: sha512-u8YBnq1vZYHLTa/nloDJInx5kof2Uaptxev7wKTquTfhnDA+I1M8FmFRqfZKhOZC5a6vw91LJU5gwpInL7GlOw==}
+  '@slidestage/brand@0.2.0':
+    resolution: {integrity: sha512-SgyDWqfQn5LE0v/FrIYOZ3yf2zWAqdgx6R53IkN2lFsP3yOfJ1oOxAuIutxGBWC+2GLq4fe/FbENoZ3Zp8AkOA==}
     engines: {node: '>=20'}
+    hasBin: true
 
   '@slidestage/core@0.1.1':
     resolution: {integrity: sha512-xhV/ufQx15UbxajysMbM3y2dg22RGwe90YyxrK1nxSPjyWSEHG8YSQSgc6HAunPV9ooJmXkyUbzRTbLu5l+Umw==}
@@ -2388,7 +2389,7 @@ snapshots:
 
   '@rolldown/pluginutils@1.0.1': {}
 
-  '@slidestage/brand@0.1.0': {}
+  '@slidestage/brand@0.2.0': {}
 
   '@slidestage/core@0.1.1':
     dependencies:
