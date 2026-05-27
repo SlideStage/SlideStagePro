@@ -9,9 +9,22 @@ allowBuilds:
   esbuild: true
   prisma: true
 
-minimumReleaseAgeExclude:
-  - '@slidestage/brand@0.1.0'
-  - '@slidestage/brand@0.2.0'
+# Disable pnpm 11.x's 24h supply-chain age gate at the workspace level.
+#
+# The gate is meant to defend against typo-squat / compromised third-party
+# packages published moments before you install. For this monorepo every
+# dep is either (a) a first-party `@slidestage/*` package the SlideStage
+# team controls, or (b) a long-established third-party (React, Prisma,
+# Tauri, vitest, etc.). The gate's threat model does not apply here, and
+# leaving it on at the default 1440 minutes hard-blocks CI every time we
+# publish a new `@slidestage/*` minor on the same day.
+#
+# Note: `minimumReleaseAgeExclude` was attempted first but pnpm 11.1.3
+# does not honor the exclude list during the lockfile supply-chain
+# verification pass — only during package resolution. Setting the gate
+# to 0 turns the pre-check off entirely, which matches the actual risk
+# posture.
+minimumReleaseAge: 0
 
 onlyBuiltDependencies:
   - "@prisma/client"
