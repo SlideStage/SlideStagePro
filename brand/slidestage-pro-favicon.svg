@@ -1,8 +1,0 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">SlideStage Pro favicon</title>
-  <desc id="desc">Small SlideStage Pro stage icon.</desc>
-  <rect x="4" y="4" width="56" height="56" rx="13" fill="#111827"/>
-  <rect x="13" y="15" width="38" height="28" rx="5" fill="#F8FAFC"/>
-  <path d="M25 39V23H33C38 23 42 26 42 31C42 36 38 39 33 39H28" stroke="#6366F1" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M19 48H45" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
-</svg>

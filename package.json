@@ -19,6 +19,8 @@
     "check": "pnpm check:boundaries && pnpm typecheck && pnpm test && pnpm build",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "check:boundaries:self-test": "node scripts/check-boundaries.test.mjs",
+    "render:ecosystem": "slidestage-render-ecosystem --target=README.md --lang=en",
+    "check:ecosystem-readme": "slidestage-render-ecosystem --target=README.md --lang=en --check",
     "fixtures": "node scripts/build-fixtures.mjs",
     "fixtures:check": "node scripts/build-fixtures.mjs --check",
     "changeset": "changeset",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.0",
+    "@slidestage/brand": "^0.1.0",
     "fflate": "^0.8.2"
   }
 }
