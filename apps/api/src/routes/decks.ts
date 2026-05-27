@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Hono } from "hono";
 import { z } from "zod";
 import type { Repositories } from "../db/repositories/index.js";
@@ -155,29 +156,32 @@ export function createDeckRoutes(deps: DeckRoutesDeps): Hono<{ Variables: AuthVa
     }
 
     const title = titleOverride || pipeline.manifest.title;
-    // 7. Persist Deck + DeckVersion via repository (single transaction).
-    //    We do this before storage write so we have stable IDs to namespace
-    //    the storage key. If storage write fails we'll roll back the rows.
-    const { deck, version } = await deps.repos.deck.createWithVersion({
-      ownerId: user.id,
-      title,
-      fingerprint: pipeline.fingerprint,
-      visibility: "private",
-      version: {
-        // Placeholder objectKey written below — we update after writing bytes.
-        objectKey: "PENDING",
-        manifestJson: JSON.stringify(pipeline.manifest),
-        sizeBytes: pipeline.sizeBytes,
-        sha256: pipeline.sha256,
-      },
-    });
 
-    const key = objectKey(deck.id, version.id);
+    // Phase C.1 (2026-05-27): blob-first, DB-second.
+    //
+    // The pre-C.1 flow ran the transaction first with `objectKey = "PENDING"`
+    // and then updated the row after the storage write. That left at least
+    // three crash-consistency holes:
+    //   (a) DB committed → process crashed before `putObject` → PENDING row + no blob.
+    //   (b) `putObject` succeeded → process crashed before `setObjectKey` → orphan blob
+    //       and a row whose objectKey still says "PENDING".
+    //   (c) `GET /api/decks/:id/blob` could read a row mid-flight and 404 unpredictably.
+    //
+    // Fix: pre-generate `deckId` / `versionId` so we can compute the FINAL
+    // storage key up front. Then write the blob; only on storage success do
+    // we open the transaction. If the transaction fails (constraint
+    // violation, db crash, etc.) we best-effort delete the blob to avoid
+    // orphans. The remaining failure mode — crash AFTER blob write, BEFORE
+    // transaction — leaves an orphan blob with no DB reference, which a
+    // future GC pass can sweep by listing storage keys that have no
+    // matching version row. There is never a `PENDING` row.
+    const deckId = randomUUID();
+    const versionId = randomUUID();
+    const key = objectKey(deckId, versionId);
+
     try {
       await deps.storage.putObject(key, buffer);
     } catch (err) {
-      // Best-effort rollback — drop the deck (cascades versions).
-      await deps.repos.deck.deleteById(deck.id).catch(() => {});
       throw new ApiError(
         500,
         "STORAGE_WRITE_FAILED",
@@ -186,9 +190,29 @@ export function createDeckRoutes(deps: DeckRoutesDeps): Hono<{ Variables: AuthVa
       );
     }
 
-    // We needed the version id to build the storage key, so we update it
-    // post-creation. Race-safe because the row is private to this request.
-    await deps.repos.version.setObjectKey(version.id, key);
+    let deck, version;
+    try {
+      ({ deck, version } = await deps.repos.deck.createWithVersion({
+        id: deckId,
+        ownerId: user.id,
+        title,
+        fingerprint: pipeline.fingerprint,
+        visibility: "private",
+        version: {
+          id: versionId,
+          objectKey: key,
+          manifestJson: JSON.stringify(pipeline.manifest),
+          sizeBytes: pipeline.sizeBytes,
+          sha256: pipeline.sha256,
+        },
+      }));
+    } catch (err) {
+      // Roll back the just-written blob — never leave an orphan with the
+      // canonical key we just minted (a future upload would not collide
+      // because IDs are UUIDs, but it would still confuse GC).
+      await deps.storage.deleteObject(key).catch(() => {});
+      throw err;
+    }
 
     const response: DeckCreatedResponse = {
       id: deck.id,
@@ -264,7 +288,13 @@ export function createDeckRoutes(deps: DeckRoutesDeps): Hono<{ Variables: AuthVa
     const version = deck.versions[0];
     if (!version) throw new ApiError(404, "NO_VERSION", "Deck has no version");
 
-    const etag = `"${version.sha256}"`;
+    // ETag format is `"sha256-<hex>"` (matches `manifest.fingerprint` and
+    // `docs/API_CONTRACT.md` §3.6). The leading `sha256-` prefix is REQUIRED
+    // — pre-C.2 (2026-05-27) the code emitted a bare-hex tag (`"<hex>"`)
+    // which silently disagreed with the documented contract. Clients that
+    // round-trip `If-None-Match` from a documented response would never
+    // match (304) under the buggy format.
+    const etag = `"sha256-${version.sha256}"`;
     const ifNoneMatch = c.req.header("if-none-match");
     if (ifNoneMatch && ifNoneMatch === etag) {
       return c.body(null, 304, { ETag: etag });

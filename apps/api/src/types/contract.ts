@@ -1,96 +1,38 @@
 /**
- * Public API contract types — mirror of `docs/API_CONTRACT.md` §8.
- * Imported via `import type` by web client to stay in sync.
+ * Public API contract types — thin re-export of `@slidestage/pro-shared`.
+ *
+ * As of Phase C.3 (2026-05-27), the api-side and web-side contract type
+ * declarations have been unified into the workspace package
+ * `@slidestage/pro-shared`. This module re-exports them under their
+ * existing names so the route handlers don't need a churn-PR that
+ * touches every file.
+ *
+ * **Do not add new types to this file.** Add them to
+ * `packages/pro-shared/src/index.ts` and they will be picked up here
+ * automatically. The presence of `check-contract-drift.mjs` (Phase C.5)
+ * enforces that every ApiError code stays in sync with the shared
+ * `ErrorCode` union.
  */
 
-export type Visibility = "private" | "unlisted" | "public";
-export type Role = "user" | "admin";
-
-export interface DeckSummary {
-  id: string;
-  title: string;
-  fingerprint: string;
-  currentVersionId: string | null;
-  visibility: Visibility;
-  ownerId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  slideCount: number;
-}
-
-export interface DeckDetail extends DeckSummary {
-  currentVersion: {
-    id: string;
-    sizeBytes: number;
-    sha256: string;
-    createdAt: string;
-  } | null;
-  manifest: unknown;
-}
-
-export interface ManifestSummary {
-  slideCount: number;
-  title: string;
-  createdAt: string;
-  schema: string;
-}
-
-export interface DeckCreatedResponse {
-  id: string;
-  title: string;
-  fingerprint: string;
-  currentVersionId: string;
-  createdAt: string;
-  manifestSummary: ManifestSummary;
-}
-
-export interface PageEnvelope<T> {
-  items: T[];
-  nextCursor: string | null;
-}
-
-export interface NoteRecord {
-  deckId: string;
-  slideIndex: number;
-  body: string;
-  updatedAt: string;
-}
-
-export interface AnnotationRecord {
-  deckId: string;
-  slideIndex: number;
-  payload: unknown;
-  updatedAt: string;
-}
-
-export interface InviteRecord {
-  id: string;
-  token: string;
-  email: string | null;
-  role: Role;
-  createdAt: string;
-  expiresAt: string;
-  usedAt: string | null;
-  usedByEmail: string | null;
-  createdById: string;
-}
-
-export interface UserRecord {
-  id: string;
-  email: string;
-  name: string;
-  role: Role;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface HealthResponse {
-  status: "ok" | "degraded";
-  version: string;
-  uptimeSeconds: number;
-  checks: { db: "ok" | "fail"; storage: "ok" | "fail" };
-}
-
-export interface ApiErrorBody {
-  error: { code: string; message: string; details?: unknown };
-}
+export type {
+  ApiErrorBody,
+  ApiErrorPayload,
+  AnnotationRecord,
+  AnnotationsListResponse,
+  DeckCurrentVersion,
+  DeckCreatedResponse,
+  DeckDetail,
+  DeckSummary,
+  ErrorCode,
+  HealthResponse,
+  InviteRecord,
+  ManifestSummary,
+  NoteRecord,
+  NotesListResponse,
+  PageEnvelope,
+  PageResponse,
+  Role,
+  UserRecord,
+  UserRole,
+  Visibility,
+} from "@slidestage/pro-shared";

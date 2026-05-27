@@ -1,15 +1,27 @@
 import type { Context, ErrorHandler, NotFoundHandler } from "hono";
 import { HTTPException } from "hono/http-exception";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+import type { ErrorCode } from "@slidestage/pro-shared";
 
+/**
+ * Server-side ApiError. Route handlers throw this; the {@link errorHandler}
+ * below converts it into the documented `{ error: { code, message, details? } }`
+ * envelope.
+ *
+ * Phase C.4/C.5 (2026-05-27): `code` is now typed as `ErrorCode` (the
+ * canonical union exported from `@slidestage/pro-shared`). Adding a
+ * brand-new code requires editing `pro-shared/src/index.ts` first — TS
+ * will fail compilation here otherwise. This is the contract-drift
+ * gate that replaces a static-analysis script.
+ */
 export class ApiError extends Error {
   override readonly name = "ApiError";
   readonly status: ContentfulStatusCode;
-  readonly code: string;
+  readonly code: ErrorCode;
   readonly details?: unknown;
   constructor(
     status: ContentfulStatusCode,
-    code: string,
+    code: ErrorCode,
     message: string,
     details?: unknown,
   ) {
@@ -20,6 +32,13 @@ export class ApiError extends Error {
   }
 }
 
+/**
+ * Format an error body. Accepts `string` (not `ErrorCode`) because the
+ * generic HTTP-fallthrough path (`httpCodeFor`) emits dynamic
+ * `HTTP_<status>` strings for unknown statuses — those are diagnostic,
+ * not part of the public contract, and intentionally not in the
+ * `ErrorCode` union.
+ */
 function formatBody(code: string, message: string, details?: unknown) {
   const body: { error: { code: string; message: string; details?: unknown } } = {
     error: { code, message },

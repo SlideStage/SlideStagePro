@@ -77,12 +77,28 @@ export function createDeckRepository(prisma: PrismaClient) {
       return deck;
     },
 
+    /**
+     * Insert a deck + its first version atomically.
+     *
+     * Phase C.1 (2026-05-27): the caller now supplies `id` / `version.id`
+     * pre-generated (via `crypto.randomUUID()` at the route layer) so the
+     * blob can be written to its FINAL `objectKey` BEFORE the transaction
+     * runs. This eliminates the old `objectKey = "PENDING"` exposure
+     * window — see `routes/decks.ts` POST handler for the surrounding
+     * "blob-first, DB-second, cleanup-on-DB-failure" flow.
+     *
+     * Prisma's `@default(cuid())` is preserved as a backstop: if `id`
+     * is omitted the row still gets a cuid. New call sites should always
+     * pass it explicitly to keep the crash-safety guarantee.
+     */
     async createWithVersion(input: {
+      id?: string;
       ownerId: string;
       title: string;
       fingerprint: string;
       visibility?: "private" | "unlisted" | "public";
       version: {
+        id?: string;
         objectKey: string;
         manifestJson: string;
         sizeBytes: number;
@@ -92,6 +108,7 @@ export function createDeckRepository(prisma: PrismaClient) {
       return prisma.$transaction(async (tx) => {
         const deck = await tx.deck.create({
           data: {
+            ...(input.id ? { id: input.id } : {}),
             ownerId: input.ownerId,
             title: input.title,
             fingerprint: input.fingerprint,
@@ -100,6 +117,7 @@ export function createDeckRepository(prisma: PrismaClient) {
         });
         const version = await tx.deckVersion.create({
           data: {
+            ...(input.version.id ? { id: input.version.id } : {}),
             deckId: deck.id,
             objectKey: input.version.objectKey,
             manifestJson: input.version.manifestJson,

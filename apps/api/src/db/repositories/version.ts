@@ -21,6 +21,15 @@ export function createVersionRepository(prisma: PrismaClient) {
         where: { id: deck.currentVersionId },
       });
     },
+    /**
+     * Update a version's storage key.
+     *
+     * Phase C.1 (2026-05-27): the deck-upload route no longer calls this
+     * — pre-generating ids in `routes/decks.ts` lets us insert the final
+     * key inside the transaction. Kept for potential multi-version /
+     * import flows and to preserve repository surface stability; remove
+     * once no caller is left.
+     */
     async setObjectKey(id: string, objectKey: string) {
       return prisma.deckVersion.update({
         where: { id },
