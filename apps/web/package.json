@@ -5,6 +5,9 @@
   "type": "module",
   "description": "SlideStage Pro web client (React 19 + Vite + react-router v7).",
   "scripts": {
+    "sync:brand": "node scripts/sync-brand.mjs",
+    "predev": "pnpm sync:brand",
+    "prebuild": "pnpm sync:brand",
     "dev": "vite",
     "build": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
@@ -12,6 +15,7 @@
     "test": "vitest run --reporter=verbose"
   },
   "dependencies": {
+    "@slidestage/brand": "^0.1.0",
     "@slidestage/core": "^0.1.1",
     "@slidestage/lite-preset": "^0.1.1",
     "@slidestage/pro-preset": "workspace:*",

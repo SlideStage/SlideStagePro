@@ -54,7 +54,9 @@ docs are exempt so this very document is allowed to spell out the words.
 ## 3. What Pro is allowed to do
 
 - `import` anything from `@slidestage/core`, `@slidestage/ui`,
-  `@slidestage/lite-preset` (declared as semver dependencies — see §4).
+  `@slidestage/lite-preset`, `@slidestage/brand`, and (where Pro needs the
+  `.stage` format types) `@slidestage/spec` (declared as semver dependencies
+  — see §4).
 - Read the **published API** (the `exports` map in each Lite package).
 - Read Lite source files **on disk** for understanding (`Read` /
   `Glob` / Grep tools), as long as no `import` ever crosses the boundary.
@@ -62,6 +64,10 @@ docs are exempt so this very document is allowed to spell out the words.
   `trustCapabilities`, the entire `converter/`) through these imports.
 - Write **Pro-only** capabilities under `packages/pro-preset/`, install them
   via the `proPreset()` plugin contract that `@slidestage/core` defines.
+- Mirror `@slidestage/brand`'s SVG / PNG `assets/` tree into a `.gitignore`'d
+  location (e.g. `apps/web/public/brand/`) via a `sync:brand` prebuild step.
+  Do **not** commit duplicates of those bytes — the npm package is the
+  source of truth.
 
 ## 4. Dependency mode: npm semver only (current)
 
@@ -74,7 +80,10 @@ removed entirely:
 "dependencies": {
   "@slidestage/core":        "^0.1.1",
   "@slidestage/ui":          "^0.1.1",
-  "@slidestage/lite-preset": "^0.1.1"
+  "@slidestage/lite-preset": "^0.1.1",
+  // Optional, by surface area:
+  "@slidestage/brand":       "^0.1.0",   // marks/wordmarks/favicons/tokens
+  "@slidestage/spec":        "^0.1.0"    // .stage format types (when needed)
 }
 ```
 

@@ -76,6 +76,12 @@ const IGNORE_PATH_SUBSTRINGS = [
   // committing the resulting package.json is what's forbidden, and that's
   // caught by `checkPackageJsonLiteRefs` on the (modified) package.json itself.
   "scripts/dev-link-lite.mjs",
+  // Build-time helper scripts (sync-brand, etc.) live next to the web app
+  // they support but never load into the browser. They use Node-only APIs
+  // (`node:fs/promises`, `node:url`) which would otherwise trip the
+  // apps/web server-module ban, so we exempt them by path. The "browser-
+  // only" rule still applies to all `src/` and `tests/` files.
+  "apps/web/scripts/",
   // Docs are reference material that must be able to QUOTE forbidden strings
   // as bad-examples ("don't do this") without tripping the checker. The
   // boundary rules apply to *code*, not to prose explaining the rules.

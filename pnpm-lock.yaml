@@ -66,6 +66,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@slidestage/brand':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@slidestage/core':
         specifier: ^0.1.1
         version: 0.1.1
@@ -708,6 +711,10 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
+
+  '@slidestage/brand@0.1.0':
+    resolution: {integrity: sha512-u8YBnq1vZYHLTa/nloDJInx5kof2Uaptxev7wKTquTfhnDA+I1M8FmFRqfZKhOZC5a6vw91LJU5gwpInL7GlOw==}
+    engines: {node: '>=20'}
 
   '@slidestage/core@0.1.1':
     resolution: {integrity: sha512-xhV/ufQx15UbxajysMbM3y2dg22RGwe90YyxrK1nxSPjyWSEHG8YSQSgc6HAunPV9ooJmXkyUbzRTbLu5l+Umw==}
@@ -2377,6 +2384,8 @@ snapshots:
     optional: true
 
   '@rolldown/pluginutils@1.0.1': {}
+
+  '@slidestage/brand@0.1.0': {}
 
   '@slidestage/core@0.1.1':
     dependencies:

@@ -5,9 +5,10 @@ alwaysApply: true
 
 # Lite Package Dependency Boundary
 
-- Pro should depend on `@slidestage/core`, `@slidestage/ui`, and `@slidestage/lite-preset` by semver once Lite packages are published.
+- Pro should depend on the published Lite-side packages by semver: `@slidestage/core`, `@slidestage/ui`, `@slidestage/lite-preset`, `@slidestage/brand`, and (where Pro needs the `.stage` format types) `@slidestage/spec`.
 - Do not depend on the whole `SlideStageLite` app repository.
 - Do not commit `file:../SlideStageLite/...`, `link:../SlideStageLite/...`, or deep source imports from the Lite checkout into `package.json` or source code.
 - Local `pnpm link` / `yalc` workflows are allowed only as temporary developer setup and must not be committed.
 - Pro-only features belong in Pro packages such as `@slidestage/pro-*` or Pro apps. Do not patch Lite package source inside this repo to add Pro behavior.
 - Schema/capability changes that both editions need should be proposed upstream in Lite's `@slidestage/core` package, then consumed here through a versioned dependency.
+- Brand assets (marks, wordmarks, favicons, social cards) and design tokens are owned by `@slidestage/brand` upstream. Pro must consume those bytes via the npm package — do not commit duplicates of the SVG/PNG files in this repo or in Pro app `public/brand/` directories (mirror via a `sync:brand` prebuild step into a `.gitignore`'d location instead).

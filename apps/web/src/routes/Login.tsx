@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
+import proMarkSvgUrl from "@slidestage/brand/assets/svg/slidestage-pro-mark.svg?url";
 import { authClient } from "../auth/client";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
@@ -58,7 +59,7 @@ export function Login() {
       <div className="auth-shell__card">
         <div className="auth-shell__brand">
           <img
-            src="/brand/slidestage-pro-mark.svg"
+            src={proMarkSvgUrl}
             alt=""
             width={28}
             height={28}

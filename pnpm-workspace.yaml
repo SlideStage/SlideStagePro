@@ -9,6 +9,9 @@ allowBuilds:
   esbuild: true
   prisma: true
 
+minimumReleaseAgeExclude:
+  - '@slidestage/brand@0.1.0'
+
 onlyBuiltDependencies:
   - "@prisma/client"
   - "@prisma/engines"

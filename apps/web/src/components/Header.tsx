@@ -1,5 +1,6 @@
 import { LayoutDashboard, LogOut, Plus, Presentation, Settings as SettingsIcon } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router";
+import proMarkSvgUrl from "@slidestage/brand/assets/svg/slidestage-pro-mark.svg?url";
 import { signOut, useSession, userIsAdmin, type SessionUser } from "../auth/client";
 import { Button } from "./Button";
 
@@ -22,7 +23,7 @@ export function Header() {
       <div className="app-header__inner">
         <Link to="/dashboard" className="app-header__brand">
           <img
-            src="/brand/slidestage-pro-mark.svg"
+            src={proMarkSvgUrl}
             alt=""
             width={24}
             height={24}
