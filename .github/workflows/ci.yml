@@ -73,6 +73,18 @@ jobs:
         # `--frozen-lockfile` ensures CI never silently bumps a version;
         # mismatches surface as install failures here rather than as
         # behavior drift later.
+        #
+        # NPM_CONFIG_MINIMUM_RELEASE_AGE=0 disables pnpm 11.x's 24h
+        # supply-chain age gate ONLY in CI. The gate is meant to defend
+        # against ratting attacks on third-party packages, but our
+        # @slidestage/* lockfile entries are first-party releases from
+        # this org. Local installs still respect the default gate (and
+        # `pnpm-workspace.yaml > minimumReleaseAgeExclude` covers any
+        # exceptions). Without this override CI fails on the same day
+        # we publish a new @slidestage/* version, which blocks the
+        # post-publish lockfile-bump commits.
+        env:
+          NPM_CONFIG_MINIMUM_RELEASE_AGE: '0'
         run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
